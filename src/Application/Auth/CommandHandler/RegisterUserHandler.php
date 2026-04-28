@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Auth\Command;
+namespace App\Application\Auth\CommandHandler;
 
+use App\Application\Auth\Command\RegisterUser;
 use App\Domain\Common\TransactionManagerInterface;
 use App\Domain\Tenant\Exception\TenantNotFound;
 use App\Domain\Tenant\TenantRepositoryInterface;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Auth;
 
 use App\Application\Auth\Command\RegisterUser;
-use App\Application\Auth\Command\RegisterUserHandler;
+use App\Application\Auth\CommandHandler\RegisterUserHandler;
 use App\Domain\Common\TransactionManagerInterface;
 use App\Domain\Tenant\Exception\TenantNotFound;
 use App\Domain\Tenant\Tenant;

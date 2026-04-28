@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Auth\Query;
+namespace App\Application\Auth\QueryHandler;
 
+use App\Application\Auth\Query\AuthenticateUser;
 use App\Domain\Tenant\Exception\TenantNotFound;
 use App\Domain\Tenant\TenantRepositoryInterface;
 use App\Domain\User\Exception\InvalidCredentials;
@@ -30,8 +31,6 @@ final class AuthenticateUserHandler
             (string) $query->email
         );
 
-        // On ne distingue pas "user introuvable" de "mauvais mot de passe"
-        // pour ne pas donner d'information à un attaquant
         if ($user === null || !$this->hasher->isPasswordValid($user, $query->password->toString())) {
             throw InvalidCredentials::create();
         }

@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace App\UI\Http\Controller\Auth;
 
 use App\Application\Auth\Command\RegisterUser;
-use App\Application\Auth\Command\RegisterUserHandler;
+use App\Application\Auth\CommandHandler\RegisterUserHandler;
 use App\Domain\Tenant\Exception\TenantNotFound;
 use App\Domain\User\Exception\UserAlreadyExists;
-use App\Domain\User\ValueObject\Email;
-use App\Domain\User\ValueObject\PlainPassword;
 use App\UI\Http\Request\Auth\RegisterRequest;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

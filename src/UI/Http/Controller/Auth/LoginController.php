@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\UI\Http\Controller\Auth;
 
 use App\Application\Auth\Query\AuthenticateUser;
-use App\Application\Auth\Query\AuthenticateUserHandler;
+use App\Application\Auth\QueryHandler\AuthenticateUserHandler;
 use App\Infrastructure\Security\JwtTokenGenerator;
 use App\UI\Http\Request\Auth\LoginRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
