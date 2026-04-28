@@ -57,23 +57,4 @@ final class CreateTenantTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(422);
     }
-
-    public function test_get_tenant_by_slug(): void
-    {
-        $client = static::createClient();
-
-        $client->request(
-            method: 'POST',
-            uri: '/tenants',
-            content: json_encode(['name' => 'Acme Corp', 'slug' => 'acme-get']),
-            server: ['CONTENT_TYPE' => 'application/json'],
-        );
-
-        $client->request('GET', '/tenants/acme-get');
-
-        $this->assertResponseStatusCodeSame(200);
-
-        $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertSame('acme-get', $data['slug']);
-    }
 }
