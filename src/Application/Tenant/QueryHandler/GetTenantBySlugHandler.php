@@ -17,7 +17,7 @@ final class GetTenantBySlugHandler
 
     public function __invoke(GetTenantBySlug $query): Tenant
     {
-        return $this->tenants->findBySlug($query->slug)
-            ?? throw TenantNotFound::forSlug($query->slug);
+        return $this->tenants->findBySlug((string) $query->slug)
+            ?? throw TenantNotFound::forSlug((string) $query->slug);
     }
 }

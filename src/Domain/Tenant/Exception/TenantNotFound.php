@@ -10,4 +10,9 @@ final class TenantNotFound extends \DomainException
     {
         return new self("Tenant '{$slug}' not found.");
     }
+
+    public static function forId(string $id): self
+    {
+        return new self("Tenant '{$id}' not found.");
+    }
 }

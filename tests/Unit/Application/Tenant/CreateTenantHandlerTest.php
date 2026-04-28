@@ -10,6 +10,7 @@ use App\Domain\Common\TransactionManagerInterface;
 use App\Domain\Tenant\Exception\TenantAlreadyExists;
 use App\Domain\Tenant\Tenant;
 use App\Domain\Tenant\TenantRepositoryInterface;
+use App\Domain\Tenant\ValueObject\Slug;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -38,7 +39,7 @@ final class CreateTenantHandlerTest extends TestCase
 
         $tenant = ($this->handler)(new CreateTenant(
             name: 'Acme Corp',
-            slug: 'acme',
+            slug: new Slug('acme'),
         ));
 
         $this->assertSame('Acme Corp', $tenant->getName());
@@ -54,7 +55,7 @@ final class CreateTenantHandlerTest extends TestCase
 
         ($this->handler)(new CreateTenant(
             name: 'Acme Corp',
-            slug: 'acme',
+            slug: new Slug('acme'),
         ));
     }
 }

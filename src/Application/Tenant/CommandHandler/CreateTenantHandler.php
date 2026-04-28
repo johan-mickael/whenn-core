@@ -19,10 +19,10 @@ final class CreateTenantHandler
 
     public function __invoke(CreateTenant $command): Tenant
     {
-        $existing = $this->tenants->findBySlug($command->slug);
+        $existing = $this->tenants->findBySlug((string) $command->slug);
 
         if ($existing !== null) {
-            throw TenantAlreadyExists::forSlug($command->slug);
+            throw TenantAlreadyExists::forSlug((string) $command->slug);
         }
 
         $tenant = new Tenant(

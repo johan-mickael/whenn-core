@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Tenant;
 
 use App\Domain\Event\Event;
+use App\Domain\Tenant\ValueObject\Slug;
 use App\Domain\User\User;
 use App\Domain\Venue\Venue;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -46,10 +47,10 @@ class Tenant
     #[ORM\OneToMany(targetEntity: Venue::class, mappedBy: 'tenant', cascade: ['persist'], orphanRemoval: true)]
     private Collection $venues;
 
-    public function __construct(string $name, string $slug, ?string $logoUrl = null)
+    public function __construct(string $name, Slug $slug, ?string $logoUrl = null)
     {
         $this->name = $name;
-        $this->slug = $slug;
+        $this->slug = (string) $slug;
         $this->logoUrl = $logoUrl;
         $this->users = new ArrayCollection();
         $this->events = new ArrayCollection();

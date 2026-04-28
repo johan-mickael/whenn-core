@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Fixture;
 
 use App\Domain\Tenant\Tenant;
+use App\Domain\Tenant\ValueObject\Slug;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -16,7 +17,7 @@ class TenantFixture extends Fixture
     {
         $tenant = new Tenant(
             name: 'Acme Corp',
-            slug: 'acme',
+            slug: new Slug('acme'),
         );
 
         $manager->persist($tenant);

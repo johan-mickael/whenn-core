@@ -6,6 +6,7 @@ namespace App\UI\Http\Controller\Tenant;
 
 use App\Application\Tenant\Command\CreateTenant;
 use App\Application\Tenant\CommandHandler\CreateTenantHandler;
+use App\Domain\Tenant\ValueObject\Slug;
 use App\UI\Http\Request\Tenant\CreateTenantRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -25,7 +26,7 @@ final class CreateTenantController extends AbstractController
     ): JsonResponse {
         $tenant = ($this->handler)(new CreateTenant(
             name: $dto->name,
-            slug: $dto->slug,
+            slug: new Slug($dto->slug),
             logoUrl: $dto->logoUrl,
         ));
 
