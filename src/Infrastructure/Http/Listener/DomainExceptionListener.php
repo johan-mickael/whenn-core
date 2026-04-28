@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Http\Listener;
 
+use App\Domain\Tenant\Exception\TenantAlreadyExists;
 use App\Domain\Tenant\Exception\TenantNotFound;
 use App\Domain\User\Exception\InvalidCredentials;
 use App\Domain\User\Exception\UserAlreadyExists;
@@ -16,6 +17,7 @@ final class DomainExceptionListener
 {
     private const MAP = [
         TenantNotFound::class => Response::HTTP_NOT_FOUND,
+        TenantAlreadyExists::class    => Response::HTTP_CONFLICT,
         UserAlreadyExists::class => Response::HTTP_CONFLICT,
         InvalidCredentials::class => Response::HTTP_UNAUTHORIZED,
         \InvalidArgumentException::class => Response::HTTP_UNPROCESSABLE_ENTITY,
@@ -25,12 +27,11 @@ final class DomainExceptionListener
     {
         $exception = $event->getThrowable();
 
-        // Let Symfony handle its own HttpExceptions
-        if ($exception instanceof HttpExceptionInterface) {
-            return;
-        }
-
-        $statusCode = self::MAP[$exception::class] ?? Response::HTTP_INTERNAL_SERVER_ERROR;
+        $statusCode = match(true) {
+            $exception instanceof HttpExceptionInterface     => $exception->getStatusCode(),
+            isset(self::MAP[$exception::class])              => self::MAP[$exception::class],
+            default                                          => Response::HTTP_INTERNAL_SERVER_ERROR,
+        };
 
         $event->setResponse(new JsonResponse(
             ['error' => $exception->getMessage()],

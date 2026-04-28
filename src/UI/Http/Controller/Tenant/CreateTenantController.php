@@ -1,0 +1,39 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\UI\Http\Controller\Tenant;
+
+use App\Application\Tenant\Command\CreateTenant;
+use App\Application\Tenant\CommandHandler\CreateTenantHandler;
+use App\UI\Http\Request\Tenant\CreateTenantRequest;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Routing\Attribute\Route;
+
+#[Route('/tenants', methods: ['POST'])]
+final class CreateTenantController extends AbstractController
+{
+    public function __construct(
+        private readonly CreateTenantHandler $handler,
+    ) {}
+
+    public function __invoke(
+        #[MapRequestPayload] CreateTenantRequest $dto,
+    ): JsonResponse {
+        $tenant = ($this->handler)(new CreateTenant(
+            name: $dto->name,
+            slug: $dto->slug,
+            logoUrl: $dto->logoUrl,
+        ));
+
+        return $this->json([
+            'id'      => $tenant->getId(),
+            'name'    => $tenant->getName(),
+            'slug'    => $tenant->getSlug(),
+            'logoUrl' => $tenant->getLogoUrl(),
+        ], Response::HTTP_CREATED);
+    }
+}
