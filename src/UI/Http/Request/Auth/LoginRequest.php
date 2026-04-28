@@ -10,7 +10,7 @@ final class LoginRequest
 {
     public function __construct(
         #[Assert\NotBlank]
-        public readonly string $tenantSlug,
+        public readonly string $tenant_slug,
 
         #[Assert\NotBlank]
         #[Assert\Email]
@@ -24,7 +24,7 @@ final class LoginRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            tenantSlug: $data['tenant_slug'] ?? '',
+            tenant_slug: $data['tenant_slug'] ?? '',
             email: $data['email'] ?? '',
             password: $data['password'] ?? '',
         );

@@ -10,7 +10,7 @@ use App\Infrastructure\Security\JwtTokenGenerator;
 use App\UI\Http\Request\Auth\LoginRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/auth/login', methods: ['POST'])]
@@ -21,13 +21,11 @@ final class LoginController extends AbstractController
         private readonly JwtTokenGenerator $tokenGenerator,
     ) {}
 
-    public function __invoke(Request $request): JsonResponse
-    {
-        $body = json_decode($request->getContent(), true) ?? [];
-        $dto  = LoginRequest::fromArray($body);
-
-        $user  = ($this->handler)(new AuthenticateUser(
-            tenantSlug: $dto->tenantSlug,
+    public function __invoke(
+        #[MapRequestPayload] LoginRequest $dto,
+    ): JsonResponse {
+        $user = ($this->handler)(new AuthenticateUser(
+            tenantSlug: $dto->tenant_slug,
             email: $dto->email,
             password: $dto->password,
         ));

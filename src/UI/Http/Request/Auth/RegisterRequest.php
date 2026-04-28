@@ -10,7 +10,7 @@ final class RegisterRequest
 {
     public function __construct(
         #[Assert\NotBlank(message: 'tenant_slug is required.')]
-        public readonly string $tenantSlug,
+        public readonly string $tenant_slug,
 
         #[Assert\NotBlank(message: 'email is required.')]
         #[Assert\Email(message: 'Invalid email format.')]
@@ -20,19 +20,19 @@ final class RegisterRequest
         #[Assert\Length(min: 8, minMessage: 'Password must be at least 8 characters.')]
         public readonly string $password,
 
-        public readonly ?string $firstName = null,
-        public readonly ?string $lastName = null,
+        public readonly ?string $first_name = null,
+        public readonly ?string $last_name = null,
     ) {
     }
 
     public static function fromArray(array $data): self
     {
         return new self(
-            tenantSlug: $data['tenant_slug'] ?? '',
+            tenant_slug: $data['tenant_slug'] ?? '',
             email: $data['email'] ?? '',
             password: $data['password'] ?? '',
-            firstName: $data['first_name'] ?? null,
-            lastName: $data['last_name'] ?? null,
+            first_name: $data['first_name'] ?? null,
+            last_name: $data['last_name'] ?? null,
         );
     }
 }
