@@ -6,6 +6,7 @@ namespace App\Domain\Venue;
 
 use App\Domain\Event\Event;
 use App\Domain\Tenant\Tenant;
+use App\Domain\Venue\ValueObject\Capacity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -65,7 +66,7 @@ class Venue
         string $address,
         string $city,
         string $country,
-        int $capacity,
+        Capacity $capacity,
         ?string $zipCode = null,
         ?float $latitude = null,
         ?float $longitude = null,
@@ -75,7 +76,7 @@ class Venue
         $this->address = $address;
         $this->city = $city;
         $this->country = $country;
-        $this->capacity = $capacity;
+        $this->capacity = $capacity->value;
         $this->zipCode = $zipCode;
         $this->latitude = $latitude;
         $this->longitude = $longitude;

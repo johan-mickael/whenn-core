@@ -17,7 +17,7 @@ final class CreateTenantTest extends WebTestCase
             uri: '/tenants',
             content: json_encode([
                 'name' => 'Acme Corp',
-                'slug' => 'acme',
+                'slug' => '_acme',
             ]),
             server: ['CONTENT_TYPE' => 'application/json'],
         );

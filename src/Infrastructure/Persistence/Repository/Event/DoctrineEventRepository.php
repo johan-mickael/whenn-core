@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Repository;
+namespace App\Infrastructure\Persistence\Repository\Event;
 
 use App\Domain\Event\Event;
 use App\Domain\Event\EventRepositoryInterface;
@@ -35,12 +35,10 @@ final class DoctrineEventRepository implements EventRepositoryInterface
     public function save(Event $event): void
     {
         $this->em->persist($event);
-        $this->em->flush();
     }
 
     public function remove(Event $event): void
     {
         $this->em->remove($event);
-        $this->em->flush();
     }
 }

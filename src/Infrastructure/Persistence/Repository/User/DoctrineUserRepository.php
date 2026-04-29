@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Repository;
+namespace App\Infrastructure\Persistence\Repository\User;
 
 use App\Domain\User\User;
 use App\Domain\User\UserRepositoryInterface;
@@ -35,12 +35,10 @@ final class DoctrineUserRepository implements UserRepositoryInterface
     public function save(User $user): void
     {
         $this->em->persist($user);
-        $this->em->flush();
     }
 
     public function remove(User $user): void
     {
         $this->em->remove($user);
-        $this->em->flush();
     }
 }

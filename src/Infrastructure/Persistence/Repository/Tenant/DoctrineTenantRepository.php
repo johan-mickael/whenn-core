@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Repository;
+namespace App\Infrastructure\Persistence\Repository\Tenant;
 
 use App\Domain\Tenant\Tenant;
 use App\Domain\Tenant\TenantRepositoryInterface;
@@ -27,12 +27,10 @@ final class DoctrineTenantRepository implements TenantRepositoryInterface
     public function save(Tenant $tenant): void
     {
         $this->em->persist($tenant);
-        $this->em->flush();
     }
 
     public function remove(Tenant $tenant): void
     {
         $this->em->remove($tenant);
-        $this->em->flush();
     }
 }

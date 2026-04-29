@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Repository;
+namespace App\Infrastructure\Persistence\Repository\Order;
 
 use App\Domain\Order\Order;
 use App\Domain\Order\OrderRepositoryInterface;
@@ -27,12 +27,10 @@ final class DoctrineOrderRepository implements OrderRepositoryInterface
     public function save(Order $order): void
     {
         $this->em->persist($order);
-        $this->em->flush();
     }
 
     public function remove(Order $order): void
     {
         $this->em->remove($order);
-        $this->em->flush();
     }
 }

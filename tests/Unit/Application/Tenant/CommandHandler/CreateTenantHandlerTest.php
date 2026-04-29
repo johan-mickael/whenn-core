@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\Tenant;
+namespace App\Tests\Unit\Application\Tenant\CommandHandler;
 
 use App\Application\Tenant\Command\CreateTenant;
 use App\Application\Tenant\CommandHandler\CreateTenantHandler;
