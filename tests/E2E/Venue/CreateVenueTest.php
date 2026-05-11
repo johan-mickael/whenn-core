@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\E2E\Venue;
 
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 final class CreateVenueTest extends WebTestCase
@@ -24,6 +25,7 @@ final class CreateVenueTest extends WebTestCase
         return json_decode($client->getResponse()->getContent(), true)['token'];
     }
 
+    #[Group('johan')]
     public function test_creates_venue_successfully(): void
     {
         $client = static::createClient();

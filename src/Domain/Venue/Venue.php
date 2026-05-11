@@ -39,13 +39,13 @@ class Venue
     #[ORM\Column]
     private string $country;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?string $zipCode = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?float $latitude = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?float $longitude = null;
 
     #[ORM\Column]

@@ -9,15 +9,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class LoginRequest
 {
     public function __construct(
-        #[Assert\NotBlank]
-        public readonly string $tenant_slug,
+        #[Assert\NotBlank(message: 'tenant_slug is required.')]
+        public readonly ?string $tenant_slug,
 
-        #[Assert\NotBlank]
+        #[Assert\NotBlank(message: 'email is required.')]
         #[Assert\Email]
-        public readonly string $email,
+        public readonly ?string $email,
 
-        #[Assert\NotBlank]
-        public readonly string $password,
+        #[Assert\NotBlank(message: 'password is required.')]
+        public readonly ?string $password,
     ) {
     }
 

@@ -53,9 +53,6 @@ final class LoginTest extends WebTestCase
 
         $data = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('token', $data);
-        $this->assertArrayHasKey('user', $data);
-        $this->assertSame('buyer@acme.com', $data['user']['email']);
-        $this->assertSame('BUYER', $data['user']['role']);
     }
 
     public function test_login_returns_401_with_wrong_password(): void

@@ -9,19 +9,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class CreateVenueRequest
 {
     #[Assert\NotBlank(message: 'name is required.')]
-    public string $name = '';
+    public ?string $name = '';
 
     #[Assert\NotBlank(message: 'address is required.')]
-    public string $address = '';
+    public ?string $address = '';
 
     #[Assert\NotBlank(message: 'city is required.')]
-    public string $city = '';
+    public ?string $city = '';
 
     #[Assert\NotBlank(message: 'country is required.')]
-    public string $country = '';
+    public ?string $country = '';
 
     #[Assert\NotBlank(message: 'capacity is required.')]
-    public int $capacity = 0;
+    public ?int $capacity = 0;
 
     public ?string $zipCode   = null;
     public ?float  $latitude  = null;

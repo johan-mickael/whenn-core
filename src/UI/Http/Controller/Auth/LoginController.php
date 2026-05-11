@@ -32,12 +32,6 @@ final class LoginController extends AbstractController
 
         return $this->json([
             'token' => $this->tokenGenerator->generateFor($user),
-            'user'  => [
-                'id'       => $user->getId(),
-                'email'    => $user->getEmailString(),
-                'role'     => $user->getRole()->value,
-                'tenantId' => $user->getTenant()->getId(),
-            ],
         ]);
     }
 }

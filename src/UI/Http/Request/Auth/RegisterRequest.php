@@ -10,15 +10,15 @@ final class RegisterRequest
 {
     public function __construct(
         #[Assert\NotBlank(message: 'tenant_slug is required.')]
-        public readonly string $tenant_slug,
+        public readonly ?string $tenant_slug,
 
         #[Assert\NotBlank(message: 'email is required.')]
         #[Assert\Email(message: 'Invalid email format.')]
-        public readonly string $email,
+        public readonly ?string $email,
 
         #[Assert\NotBlank(message: 'password is required.')]
         #[Assert\Length(min: 8, minMessage: 'Password must be at least 8 characters.')]
-        public readonly string $password,
+        public readonly ?string $password,
 
         public readonly ?string $first_name = null,
         public readonly ?string $last_name = null,

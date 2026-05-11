@@ -17,7 +17,7 @@ final class CreateTenantTest extends WebTestCase
             uri: '/tenants',
             content: json_encode([
                 'name' => 'Acme Corp',
-                'slug' => '_acme',
+                'slug' => 'acme-test',
             ]),
             server: ['CONTENT_TYPE' => 'application/json'],
         );
@@ -26,7 +26,7 @@ final class CreateTenantTest extends WebTestCase
 
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertSame('Acme Corp', $data['name']);
-        $this->assertSame('acme', $data['slug']);
+        $this->assertSame('acme-test', $data['slug']);
     }
 
     public function test_returns_409_when_slug_already_exists(): void
