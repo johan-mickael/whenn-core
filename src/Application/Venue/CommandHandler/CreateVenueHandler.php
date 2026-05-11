@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Application\Venue\CommandHandler;
 
-use App\Domain\Common\TransactionManagerInterface;
+use App\Application\Venue\Command\CreateVenue;
+use App\Domain\Common\Id\IdGeneratorInterface;
+use App\Domain\Common\Transaction\TransactionManagerInterface;
 use App\Domain\Venue\Service\VenueAddressMustBeUnique;
 use App\Domain\Venue\Venue;
 use App\Domain\Venue\VenueRepositoryInterface;
-use App\Application\Venue\Command\CreateVenue;
 
 final class CreateVenueHandler
 {
@@ -16,12 +17,14 @@ final class CreateVenueHandler
         private readonly VenueRepositoryInterface $venues,
         private readonly VenueAddressMustBeUnique $venueAddressMustBeUnique,
         private readonly TransactionManagerInterface $transaction,
+        private readonly IdGeneratorInterface $idGenerator
     ) {}
 
     public function __invoke(CreateVenue $command): Venue
     {
 
-        $venue = new Venue(
+        $venue = Venue::create(
+            id: $this->idGenerator->generate(),
             name: $command->name,
             address: $command->address,
             city: $command->city,

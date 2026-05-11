@@ -7,6 +7,7 @@ namespace App\Domain\User;
 interface UserRepositoryInterface
 {
     public function findById(string $id): ?User;
+    public function findByEmail(string $email): ?User;
     public function findByTenantAndEmail(string $tenantId, string $email): ?User;
     /** @return User[] */
     public function findByTenant(string $tenantId): array;

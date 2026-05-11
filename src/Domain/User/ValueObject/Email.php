@@ -4,19 +4,26 @@ declare(strict_types=1);
 
 namespace App\Domain\User\ValueObject;
 
+use App\Domain\User\Exception\InvalidEmail;
+
 final class Email
 {
     private string $value;
 
-    public function __construct(string $value)
+    private function __construct(string $value)
+    {
+        $this->value = $value;
+    }
+
+    public static function create(string $value): self
     {
         $normalized = mb_strtolower(trim($value));
 
         if (!filter_var($normalized, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException("Invalid email address: '{$value}'.");
+            throw InvalidEmail::create($value);
         }
 
-        $this->value = $normalized;
+        return new self($normalized);
     }
 
     public function equals(self $other): bool

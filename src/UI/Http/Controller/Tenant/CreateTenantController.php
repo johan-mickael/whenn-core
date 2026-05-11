@@ -31,10 +31,10 @@ final class CreateTenantController extends AbstractController
         ));
 
         return $this->json([
-            'id'      => $tenant->getId(),
-            'name'    => $tenant->getName(),
-            'slug'    => $tenant->getSlug(),
-            'logoUrl' => $tenant->getLogoUrl(),
+            'id'      => $tenant->id(),
+            'name'    => $tenant->name(),
+            'slug'    => (string) $tenant->slug(),
+            'logoUrl' => $tenant->logoUrl(),
         ], Response::HTTP_CREATED);
     }
 }

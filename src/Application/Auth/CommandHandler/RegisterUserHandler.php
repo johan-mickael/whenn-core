@@ -5,23 +5,29 @@ declare(strict_types=1);
 namespace App\Application\Auth\CommandHandler;
 
 use App\Application\Auth\Command\RegisterUser;
-use App\Domain\Common\TransactionManagerInterface;
+use App\Domain\Common\Transaction\TransactionManagerInterface;
+use App\Domain\Security\PasswordHasherInterface;
 use App\Domain\Tenant\Exception\TenantNotFound;
 use App\Domain\Tenant\TenantRepositoryInterface;
 use App\Domain\User\Exception\UserAlreadyExists;
 use App\Domain\User\Role;
+use App\Domain\User\Service\UserEmailForTenantMustBeUnique;
 use App\Domain\User\User;
 use App\Domain\User\UserRepositoryInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use DateTimeImmutable;
+use Psr\Clock\ClockInterface;
 
 final class RegisterUserHandler
 {
     public function __construct(
-        private readonly TenantRepositoryInterface $tenants,
-        private readonly UserRepositoryInterface $users,
-        private readonly UserPasswordHasherInterface $hasher,
+        private readonly TenantRepositoryInterface   $tenants,
+        private readonly UserRepositoryInterface     $users,
+        private readonly PasswordHasherInterface     $passwordHasher,
         private readonly TransactionManagerInterface $transaction,
-    ) {
+        private readonly ClockInterface              $clock,
+        private readonly UserEmailForTenantMustBeUnique  $emailForTenantMustBeUnique
+    )
+    {
     }
 
     public function __invoke(RegisterUser $command): User
@@ -29,26 +35,21 @@ final class RegisterUserHandler
         $tenant = $this->tenants->findBySlug($command->tenantSlug)
             ?? throw TenantNotFound::forSlug($command->tenantSlug);
 
-        $existing = $this->users->findByTenantAndEmail(
-            $tenant->getId(),
-            (string) $command->email
+        $this->emailForTenantMustBeUnique->assert($tenant->id(), $command->email);
+
+        $passwordHash = $this->passwordHasher->hash(
+            (string) $command->email,
+            $command->password->toString()
         );
 
-        if ($existing !== null) {
-            throw UserAlreadyExists::forEmail((string) $command->email);
-        }
-
-        $user = new User(
-            tenant: $tenant,
+        $user = User::create(
+            id: uuid_create(UUID_TYPE_RANDOM),
+            tenantId: $tenant->id(),
             email: $command->email,
-            passwordHash: '',
-            role: Role::BUYER,
+            passwordHash: $passwordHash,
+            registeredAt: $this->clock->now(),
             firstName: $command->firstName,
             lastName: $command->lastName,
-        );
-
-        $user->setPasswordHash(
-            $this->hasher->hashPassword($user, $command->password->toString())
         );
 
         $this->users->save($user);

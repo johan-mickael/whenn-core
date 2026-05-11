@@ -6,12 +6,11 @@ namespace App\Tests\Unit\Application\Venue\CommandHandler;
 
 use App\Application\Venue\Command\CreateVenue;
 use App\Application\Venue\CommandHandler\CreateVenueHandler;
-use App\Domain\Common\TransactionManagerInterface;
-use App\Domain\Tenant\Exception\TenantNotFound;
-use App\Domain\Tenant\Tenant;
+use App\Domain\Common\Transaction\TransactionManagerInterface;
 use App\Domain\Tenant\TenantRepositoryInterface;
 use App\Domain\Venue\Service\VenueAddressMustBeUnique;
 use App\Domain\Venue\VenueRepositoryInterface;
+use App\Infrastructure\Persistence\Doctrine\Entity\TenantEntity;
 use InvalidArgumentException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -40,7 +39,7 @@ final class CreateVenueHandlerTest extends TestCase
 
     public function test_creates_venue_successfully(): void
     {
-        $tenant = $this->createMock(Tenant::class);
+        $tenant = $this->createMock(TenantEntity::class);
         $this->tenants->method('findById')->willReturn($tenant);
         $this->venues->expects($this->once())->method('save');
         $this->transaction->expects($this->once())->method('flush');

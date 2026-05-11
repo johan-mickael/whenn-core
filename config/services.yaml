@@ -31,6 +31,9 @@ services:
             - { name: kernel.event_listener, event: kernel.exception }
 
     # Bind domain repository interfaces to Doctrine implementations
+    App\Domain\Security\PasswordHasherInterface:
+        class: App\Infrastructure\Security\SymfonyPasswordHasher
+
     App\Domain\Tenant\TenantRepositoryInterface:
         class: App\Infrastructure\Persistence\Doctrine\Repository\Tenant\DoctrineTenantRepository
 
@@ -49,6 +52,10 @@ services:
     App\Domain\Common\TransactionManagerInterface:
         class: App\Infrastructure\Persistence\Doctrine\DoctrineTransactionManager
 
+    # Clock
+    Psr\Clock\ClockInterface:
+        class: Symfony\Component\Clock\NativeClock
+
 when@test:
     services:
         App\Tests\Fixture\:
@@ -56,3 +63,5 @@ when@test:
             tags: ['doctrine.fixture.orm']
             autowire: true
             autoconfigure: true
+            exclude:
+                - '../tests/Fixture/Security/'

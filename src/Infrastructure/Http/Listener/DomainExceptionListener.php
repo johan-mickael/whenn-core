@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Http\Listener;
 
-use App\Domain\Tenant\Exception\TenantAlreadyExists;
 use App\Domain\Tenant\Exception\TenantNotFound;
 use App\Domain\User\Exception\InvalidCredentials;
 use App\Domain\User\Exception\UserAlreadyExists;
@@ -19,7 +18,6 @@ final class DomainExceptionListener
 {
     private const MAP = [
         TenantNotFound::class => Response::HTTP_NOT_FOUND,
-        TenantAlreadyExists::class => Response::HTTP_CONFLICT,
         UserAlreadyExists::class => Response::HTTP_CONFLICT,
         VenueNotFound::class => Response::HTTP_NOT_FOUND,
         DuplicateVenueAddress::class => Response::HTTP_CONFLICT,

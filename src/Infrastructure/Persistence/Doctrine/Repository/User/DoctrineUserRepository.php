@@ -6,39 +6,63 @@ namespace App\Infrastructure\Persistence\Doctrine\Repository\User;
 
 use App\Domain\User\User;
 use App\Domain\User\UserRepositoryInterface;
+use App\Infrastructure\Persistence\Doctrine\Entity\UserEntity;
+use App\Infrastructure\Persistence\Doctrine\Mapper\UserMapper;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class DoctrineUserRepository implements UserRepositoryInterface
 {
-    public function __construct(private readonly EntityManagerInterface $em)
-    {
-    }
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+    ) {}
 
     public function findById(string $id): ?User
     {
-        return $this->em->find(User::class, $id);
+        $entity = $this->em->find(UserEntity::class, $id);
+
+        return $entity ? UserMapper::toDomain($entity) : null;
+    }
+
+    public function findByEmail(string $email): ?User
+    {
+        $entity = $this->em->getRepository(UserEntity::class)->findOneBy(['email' => $email]);
+
+        return $entity ? UserMapper::toDomain($entity) : null;
     }
 
     public function findByTenantAndEmail(string $tenantId, string $email): ?User
     {
-        return $this->em->getRepository(User::class)->findOneBy([
-            'tenant' => $tenantId,
+        $entity = $this->em->getRepository(UserEntity::class)->findOneBy([
+            'tenantId' => $tenantId,
             'email' => $email,
         ]);
+
+        return $entity ? UserMapper::toDomain($entity) : null;
     }
 
     public function findByTenant(string $tenantId): array
     {
-        return $this->em->getRepository(User::class)->findBy(['tenant' => $tenantId]);
+        $entities = $this->em->getRepository(UserEntity::class)->findBy([
+            'tenantId' => $tenantId,
+        ]);
+
+        return array_map(
+            fn(UserEntity $e) => UserMapper::toDomain($e),
+            $entities
+        );
     }
 
     public function save(User $user): void
     {
-        $this->em->persist($user);
+        $entity = UserMapper::toEntity($user);
+
+        $this->em->persist($entity);
     }
 
     public function remove(User $user): void
     {
-        $this->em->remove($user);
+        $entity = UserMapper::toEntity($user);
+
+        $this->em->remove($entity);
     }
 }

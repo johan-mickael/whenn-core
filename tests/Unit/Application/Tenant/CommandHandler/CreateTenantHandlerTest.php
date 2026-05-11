@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Application\Tenant\CommandHandler;
 
 use App\Application\Tenant\Command\CreateTenant;
 use App\Application\Tenant\CommandHandler\CreateTenantHandler;
-use App\Domain\Common\TransactionManagerInterface;
+use App\Domain\Common\Transaction\TransactionManagerInterface;
 use App\Domain\Tenant\Exception\TenantAlreadyExists;
 use App\Domain\Tenant\Tenant;
 use App\Domain\Tenant\TenantRepositoryInterface;

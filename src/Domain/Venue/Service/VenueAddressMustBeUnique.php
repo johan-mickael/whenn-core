@@ -17,10 +17,10 @@ class VenueAddressMustBeUnique
 
     public function check(Venue $venue): void
     {
-        if (empty($this->venueRepository->findByAddress($venue->getAddress()))) {
+        if (empty($this->venueRepository->findByAddress($venue->address()))) {
             return;
         }
 
-        throw DuplicateVenueAddress::for($venue->getAddress());
+        throw DuplicateVenueAddress::for($venue->address());
     }
 }

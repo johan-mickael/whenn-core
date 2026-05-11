@@ -1,169 +1,106 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Domain\User;
 
-use App\Domain\Order\Order;
-use App\Domain\Tenant\Tenant;
+use App\Domain\User\Exception\InvalidName;
+use App\Domain\User\Exception\InvalidTenantId;
 use App\Domain\User\ValueObject\Email;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use DateTimeImmutable;
 
-#[ORM\Entity]
-#[ORM\Table(name: '`user`')]
-#[ORM\UniqueConstraint(name: 'uq_user_tenant_email', columns: ['tenant_id', 'email'])]
-#[ORM\Index(name: 'idx_user_tenant', columns: ['tenant_id'])]
-#[ORM\HasLifecycleCallbacks]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+final class User
 {
-    #[ORM\Id]
-    #[ORM\Column(type: 'guid')]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    private string $id;
-
-    #[ORM\ManyToOne(targetEntity: Tenant::class, inversedBy: 'users')]
-    #[ORM\JoinColumn(name: 'tenant_id', nullable: false)]
-    private Tenant $tenant;
-
-    // Doctrine stocke le string, le domaine travaille avec le Value Object
-    #[ORM\Column]
-    private string $email;
-
-    #[ORM\Column]
-    private string $passwordHash;
-
-    #[ORM\Column(nullable: true)]
-    private ?string $firstName = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?string $lastName = null;
-
-    #[ORM\Column(enumType: Role::class)]
-    private Role $role;
-
-    #[ORM\Column]
-    private \DateTimeImmutable $createdAt;
-
-    #[ORM\Column]
-    private \DateTimeImmutable $updatedAt;
-
-    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'user', cascade: ['persist'])]
-    private Collection $orders;
-
-    public function __construct(
-        Tenant $tenant,
-        Email $email,
-        string $passwordHash,
-        Role $role = Role::BUYER,
-        ?string $firstName = null,
-        ?string $lastName = null,
-    ) {
-        $this->tenant = $tenant;
-        $this->email = (string) $email;
-        $this->passwordHash = $passwordHash;
-        $this->role = $role;
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
-        $this->orders = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
-    }
-
-    #[ORM\PreUpdate]
-    public function onPreUpdate(): void
-    {
-        $this->updatedAt = new \DateTimeImmutable();
-    }
-
-    // ── UserInterface ──────────────────────────────────────────
-
-    public function getUserIdentifier(): string
-    {
-        return $this->email;
-    }
-    public function getRoles(): array
-    {
-        return ['ROLE_' . $this->role->value];
-    }
-    public function getPassword(): string
-    {
-        return $this->passwordHash;
-    }
-    public function eraseCredentials(): void
+    private function __construct(
+        private string            $id,
+        private string            $tenantId,
+        private Email             $email,
+        private string            $passwordHash,
+        private DateTimeImmutable $createdAt,
+        private Role              $role,
+        private ?string           $firstName = null,
+        private ?string           $lastName = null,
+    )
     {
     }
 
-    // ── Getters / Setters ──────────────────────────────────────
+    public static function create(
+        string             $id,
+        string             $tenantId,
+        Email              $email,
+        string             $passwordHash,
+        \DateTimeImmutable $registeredAt,
+        Role               $role = Role::BUYER,
+        ?string            $firstName = null,
+        ?string            $lastName = null,
+    ): self
+    {
 
-    public function getId(): string
+        self::assertTenantId($tenantId);
+        self::assertName($firstName, 'first_name');
+        self::assertName($lastName, 'last_name');
+
+        return new self(
+            $id,
+            $tenantId,
+            $email,
+            $passwordHash,
+            $registeredAt,
+            $role,
+            $firstName,
+            $lastName,
+        );
+    }
+
+    private static function assertTenantId(?string $tenantId): void
+    {
+        if ($tenantId === '') {
+            throw InvalidTenantId::create($tenantId);
+        }
+    }
+
+    private static function assertName(?string $name, ?string $field): void
+    {
+        if ($name === '' || is_null($name)) {
+            throw InvalidName::create($field);
+        }
+    }
+
+    public function id(): string
     {
         return $this->id;
     }
-    public function getTenant(): Tenant
-    {
-        return $this->tenant;
-    }
-    public function getEmail(): Email
-    {
-        return new Email($this->email);
-    }
-    public function getEmailString(): string
+
+    public function email(): Email
     {
         return $this->email;
     }
-    public function getPasswordHash(): string
-    {
-        return $this->passwordHash;
-    }
-    public function setPasswordHash(string $hash): static
-    {
-        $this->passwordHash = $hash;
-        return $this;
-    }
-    public function getFirstName(): ?string
-    {
-        return $this->firstName;
-    }
-    public function setFirstName(?string $v): static
-    {
-        $this->firstName = $v;
-        return $this;
-    }
-    public function getLastName(): ?string
-    {
-        return $this->lastName;
-    }
-    public function setLastName(?string $v): static
-    {
-        $this->lastName = $v;
-        return $this;
-    }
-    public function getRole(): Role
+
+    public function role(): Role
     {
         return $this->role;
     }
-    public function setRole(Role $role): static
+
+    public function tenantId(): string
     {
-        $this->role = $role;
-        return $this;
-    }
-    public function getCreatedAt(): \DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-    public function getUpdatedAt(): \DateTimeImmutable
-    {
-        return $this->updatedAt;
+        return $this->tenantId;
     }
 
-    /** @return Collection<int, Order> */
-    public function getOrders(): Collection
+    public function passwordHash(): string
     {
-        return $this->orders;
+        return $this->passwordHash;
+    }
+
+    public function firstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function lastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function createdAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
     }
 }

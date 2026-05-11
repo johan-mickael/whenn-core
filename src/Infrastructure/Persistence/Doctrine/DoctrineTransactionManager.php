@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine;
 
-use App\Domain\Common\TransactionManagerInterface;
+use App\Domain\Common\Transaction\TransactionManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class DoctrineTransactionManager implements TransactionManagerInterface

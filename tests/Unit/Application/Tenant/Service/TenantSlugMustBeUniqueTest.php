@@ -6,8 +6,8 @@ namespace App\Tests\Unit\Domain\Tenant\Service;
 
 use App\Domain\Tenant\Exception\DuplicateTenantSlug;
 use App\Domain\Tenant\Service\TenantSlugMustBeUnique;
-use App\Domain\Tenant\Tenant;
 use App\Domain\Tenant\TenantRepositoryInterface;
+use App\Infrastructure\Persistence\Doctrine\Entity\TenantEntity;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -27,7 +27,7 @@ final class TenantSlugMustBeUniqueTest extends TestCase
 
     public function test_passes_when_slug_is_unique(): void
     {
-        $tenant = $this->createMock(Tenant::class);
+        $tenant = $this->createMock(TenantEntity::class);
         $tenant->method('getSlug')->willReturn('acme');
 
         $this->tenants
@@ -42,8 +42,8 @@ final class TenantSlugMustBeUniqueTest extends TestCase
 
     public function test_throws_when_slug_already_exists(): void
     {
-        $tenant = $this->createMock(Tenant::class);
-        $existing = $this->createMock(Tenant::class);
+        $tenant = $this->createMock(TenantEntity::class);
+        $existing = $this->createMock(TenantEntity::class);
 
         $tenant->method('getSlug')->willReturn('acme');
 

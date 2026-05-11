@@ -3,8 +3,8 @@
 namespace App\Domain\Tenant\Service;
 
 use App\Domain\Tenant\Exception\DuplicateTenantSlug;
-use App\Domain\Tenant\Tenant;
 use App\Domain\Tenant\TenantRepositoryInterface;
+use App\Domain\Tenant\ValueObject\Slug;
 
 class TenantSlugMustBeUnique
 {
@@ -15,12 +15,12 @@ class TenantSlugMustBeUnique
         $this->tenantRepository = $venueRepository;
     }
 
-    public function check(Tenant $tenant): void
+    public function assert(Slug $slug): void
     {
-        if (empty($this->tenantRepository->findBySlug($tenant->getSlug()))) {
+        if (empty($this->tenantRepository->findBySlug($slug))) {
             return;
         }
 
-        throw DuplicateTenantSlug::forSlug($tenant->getSlug());
+        throw DuplicateTenantSlug::forSlug($slug);
     }
 }

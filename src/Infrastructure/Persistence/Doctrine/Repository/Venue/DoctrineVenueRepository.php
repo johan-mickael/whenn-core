@@ -6,42 +6,61 @@ namespace App\Infrastructure\Persistence\Doctrine\Repository\Venue;
 
 use App\Domain\Venue\Venue;
 use App\Domain\Venue\VenueRepositoryInterface;
+use App\Infrastructure\Persistence\Doctrine\Entity\VenueEntity;
+use App\Infrastructure\Persistence\Doctrine\Mapper\VenueMapper;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Exception\ORMException;
-use Doctrine\ORM\OptimisticLockException;
 
 final readonly class DoctrineVenueRepository implements VenueRepositoryInterface
 {
-    public function __construct(private EntityManagerInterface $em) {}
+    public function __construct(
+        private EntityManagerInterface $em
+    ) {}
 
     public function listVenues(): array
     {
-        return $this->em->getRepository(Venue::class)->findAll();
+        $entities = $this->em
+            ->getRepository(VenueEntity::class)
+            ->findAll();
+
+        return array_map(
+            static fn (VenueEntity $entity): Venue => VenueMapper::toDomain($entity),
+            $entities
+        );
     }
 
-    /**
-     * @throws OptimisticLockException
-     * @throws ORMException
-     */
     public function findById(string $id): ?Venue
     {
-        return $this->em->find(Venue::class, $id);
+        $entity = $this->em->find(VenueEntity::class, $id);
+
+        return $entity
+            ? VenueMapper::toDomain($entity)
+            : null;
     }
 
     public function save(Venue $venue): void
     {
-        $this->em->persist($venue);
+        $this->em->persist(
+            VenueMapper::toEntity($venue)
+        );
     }
 
     public function remove(Venue $venue): void
     {
-        $this->em->remove($venue);
+        $entity = VenueMapper::toEntity($venue);
+
+        $this->em->remove($entity);
     }
 
     public function findByAddress(string $address): ?Venue
     {
-        return $this->em->getRepository(Venue::class)->findOneBy([
-            'address' => $address,
-        ]);
+        $entity = $this->em
+            ->getRepository(VenueEntity::class)
+            ->findOneBy([
+                'address' => $address,
+            ]);
+
+        return $entity
+            ? VenueMapper::toDomain($entity)
+            : null;
     }
 }

@@ -17,7 +17,7 @@ final readonly class AuthenticateUser
         string $email,
         string $password,
     ) {
-        $this->email = new Email($email);
+        $this->email = Email::create($email);
         $this->password = new PlainPassword($password);
     }
 }

@@ -9,8 +9,10 @@ use App\Application\Tenant\QueryHandler\GetTenantBySlugHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/tenants/{slug}', methods: ['GET'])]
+#[IsGranted('ROLE_ADMIN')]
 final class GetTenantController extends AbstractController
 {
     public function __construct(
@@ -22,10 +24,10 @@ final class GetTenantController extends AbstractController
         $tenant = ($this->handler)(new GetTenantBySlug($slug));
 
         return $this->json([
-            'id'      => $tenant->getId(),
-            'name'    => $tenant->getName(),
-            'slug'    => $tenant->getSlug(),
-            'logoUrl' => $tenant->getLogoUrl(),
+            'id'      => $tenant->id(),
+            'name'    => $tenant->name(),
+            'slug'    => (string) $tenant->slug(),
+            'logoUrl' => $tenant->logoUrl(),
         ]);
     }
 }

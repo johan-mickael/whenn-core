@@ -19,7 +19,7 @@ final readonly class RegisterUser
         public ?string $firstName = null,
         public ?string $lastName = null,
     ) {
-        $this->email    = new Email($email);
+        $this->email    = Email::create($email);
         $this->password = new PlainPassword($password);
     }
 }

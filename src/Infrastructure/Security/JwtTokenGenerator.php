@@ -16,6 +16,6 @@ final class JwtTokenGenerator
 
     public function generateFor(User $user): string
     {
-        return $this->jwtManager->create($user);
+        return $this->jwtManager->create(new SecurityUser($user));
     }
 }

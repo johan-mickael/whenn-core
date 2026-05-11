@@ -6,13 +6,13 @@ namespace App\Tests\Unit\Application\Auth\CommandHandler;
 
 use App\Application\Auth\Command\RegisterUser;
 use App\Application\Auth\CommandHandler\RegisterUserHandler;
-use App\Domain\Common\TransactionManagerInterface;
+use App\Domain\Common\Transaction\TransactionManagerInterface;
 use App\Domain\Tenant\Exception\TenantNotFound;
-use App\Domain\Tenant\Tenant;
 use App\Domain\Tenant\TenantRepositoryInterface;
 use App\Domain\User\Exception\UserAlreadyExists;
-use App\Domain\User\User;
 use App\Domain\User\UserRepositoryInterface;
+use App\Infrastructure\Persistence\Doctrine\Entity\TenantEntity;
+use App\Infrastructure\Persistence\Doctrine\Entity\UserEntity;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -42,7 +42,7 @@ final class RegisterUserHandlerTest extends TestCase
 
     public function test_registers_new_user_successfully(): void
     {
-        $tenant = $this->createMock(Tenant::class);
+        $tenant = $this->createMock(TenantEntity::class);
         $tenant->method('getId')->willReturn('8f3c2b7a-6d1e-4c9f-9a52-3b7e8a1d5c44');
 
         $this->tenants->method('findBySlug')->willReturn($tenant);
@@ -74,8 +74,8 @@ final class RegisterUserHandlerTest extends TestCase
 
     public function test_throws_when_email_already_exists(): void
     {
-        $tenant = $this->createMock(Tenant::class);
-        $existing = $this->createMock(User::class);
+        $tenant = $this->createMock(TenantEntity::class);
+        $existing = $this->createMock(UserEntity::class);
 
         $this->tenants->method('findBySlug')->willReturn($tenant);
         $this->users->method('findByTenantAndEmail')->willReturn($existing);
