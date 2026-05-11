@@ -10,7 +10,9 @@ use App\Domain\Common\TransactionManagerInterface;
 use App\Domain\Tenant\Exception\TenantNotFound;
 use App\Domain\Tenant\Tenant;
 use App\Domain\Tenant\TenantRepositoryInterface;
+use App\Domain\Venue\Service\VenueAddressMustBeUnique;
 use App\Domain\Venue\VenueRepositoryInterface;
+use InvalidArgumentException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -18,6 +20,7 @@ final class CreateVenueHandlerTest extends TestCase
 {
     private TenantRepositoryInterface&MockObject $tenants;
     private VenueRepositoryInterface&MockObject $venues;
+    private VenueAddressMustBeUnique&MockObject $venueAddressMustBeUnique;
     private TransactionManagerInterface&MockObject $transaction;
     private CreateVenueHandler $handler;
 
@@ -25,11 +28,13 @@ final class CreateVenueHandlerTest extends TestCase
     {
         $this->tenants     = $this->createMock(TenantRepositoryInterface::class);
         $this->venues      = $this->createMock(VenueRepositoryInterface::class);
+        $this->venueAddressMustBeUnique = $this->createMock(VenueAddressMustBeUnique::class);
         $this->transaction = $this->createMock(TransactionManagerInterface::class);
 
         $this->handler = new CreateVenueHandler(
             tenants: $this->tenants,
             venues: $this->venues,
+            venueAddressMustBeUnique: $this->venueAddressMustBeUnique,
             transaction: $this->transaction,
         );
     }
@@ -42,7 +47,6 @@ final class CreateVenueHandlerTest extends TestCase
         $this->transaction->expects($this->once())->method('flush');
 
         $venue = ($this->handler)(new CreateVenue(
-            tenantId: 'tenant-uuid',
             name: 'Grand Hall',
             address: '1 rue de la Paix',
             city: 'Paris',
@@ -61,7 +65,6 @@ final class CreateVenueHandlerTest extends TestCase
         $this->expectException(TenantNotFound::class);
 
         ($this->handler)(new CreateVenue(
-            tenantId: 'unknown',
             name: 'Grand Hall',
             address: '1 rue de la Paix',
             city: 'Paris',
@@ -72,10 +75,9 @@ final class CreateVenueHandlerTest extends TestCase
 
     public function test_throws_when_capacity_is_zero(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new CreateVenue(
-            tenantId: 'tenant-uuid',
             name: 'Grand Hall',
             address: '1 rue de la Paix',
             city: 'Paris',

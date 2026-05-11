@@ -11,7 +11,6 @@ final readonly class CreateVenue
     public Capacity $capacity;
 
     public function __construct(
-        public string $tenantId,
         public string $name,
         public string $address,
         public string $city,

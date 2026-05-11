@@ -25,9 +25,7 @@ final class CreateVenueController extends AbstractController
     public function __invoke(
         #[MapRequestPayload] CreateVenueRequest $dto,
     ): JsonResponse {
-        $user  = $this->getUser();
         $venue = ($this->handler)(new CreateVenue(
-            tenantId: $user->getTenant()->getId(),
             name: $dto->name,
             address: $dto->address,
             city: $dto->city,

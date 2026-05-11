@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Domain\Venue\Service;
+
+use App\Domain\Venue\Exception\DuplicateVenueAddress;
+use App\Domain\Venue\Venue;
+use App\Domain\Venue\VenueRepositoryInterface;
+
+class VenueAddressMustBeUnique
+{
+    private VenueRepositoryInterface $venueRepository;
+
+    public function __construct(VenueRepositoryInterface $venueRepository)
+    {
+        $this->venueRepository = $venueRepository;
+    }
+
+    public function check(Venue $venue): void
+    {
+        if (empty($this->venueRepository->findByAddress($venue->getAddress()))) {
+            return;
+        }
+
+        throw DuplicateVenueAddress::for($venue->getAddress());
+    }
+}

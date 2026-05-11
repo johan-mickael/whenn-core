@@ -7,27 +7,25 @@ namespace App\Infrastructure\Persistence\Repository\Venue;
 use App\Domain\Venue\Venue;
 use App\Domain\Venue\VenueRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 
 final class DoctrineVenueRepository implements VenueRepositoryInterface
 {
     public function __construct(private readonly EntityManagerInterface $em) {}
 
+    public function listVenues(): array
+    {
+        return $this->em->getRepository(Venue::class)->findAll();
+    }
+
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function findById(string $id): ?Venue
     {
         return $this->em->find(Venue::class, $id);
-    }
-
-    public function findByIdAndTenant(string $id, string $tenantId): ?Venue
-    {
-        return $this->em->getRepository(Venue::class)->findOneBy([
-            'id'     => $id,
-            'tenant' => $tenantId,
-        ]);
-    }
-
-    public function findByTenant(string $tenantId): array
-    {
-        return $this->em->getRepository(Venue::class)->findBy(['tenant' => $tenantId]);
     }
 
     public function save(Venue $venue): void
@@ -38,5 +36,12 @@ final class DoctrineVenueRepository implements VenueRepositoryInterface
     public function remove(Venue $venue): void
     {
         $this->em->remove($venue);
+    }
+
+    public function findByAddress(string $address): ?Venue
+    {
+        return $this->em->getRepository(Venue::class)->findOneBy([
+            'address' => $address,
+        ]);
     }
 }

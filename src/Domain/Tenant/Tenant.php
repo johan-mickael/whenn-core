@@ -7,7 +7,6 @@ namespace App\Domain\Tenant;
 use App\Domain\Event\Event;
 use App\Domain\Tenant\ValueObject\Slug;
 use App\Domain\User\User;
-use App\Domain\Venue\Venue;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -44,9 +43,6 @@ class Tenant
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'tenant', cascade: ['persist'], orphanRemoval: true)]
     private Collection $events;
 
-    #[ORM\OneToMany(targetEntity: Venue::class, mappedBy: 'tenant', cascade: ['persist'], orphanRemoval: true)]
-    private Collection $venues;
-
     public function __construct(string $name, Slug $slug, ?string $logoUrl = null)
     {
         $this->name = $name;
@@ -54,7 +50,6 @@ class Tenant
         $this->logoUrl = $logoUrl;
         $this->users = new ArrayCollection();
         $this->events = new ArrayCollection();
-        $this->venues = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
     }
@@ -115,11 +110,5 @@ class Tenant
     public function getEvents(): Collection
     {
         return $this->events;
-    }
-
-    /** @return Collection<int, Venue> */
-    public function getVenues(): Collection
-    {
-        return $this->venues;
     }
 }

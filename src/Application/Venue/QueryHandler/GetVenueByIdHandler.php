@@ -17,9 +17,7 @@ final class GetVenueByIdHandler
 
     public function __invoke(GetVenueById $query): Venue
     {
-        $venue = $this->venues->findByIdAndTenant($query->id, $query->tenantId)
+        return $this->venues->findById($query->id)
             ?? throw VenueNotFound::forId($query->id);
-
-        return $venue;
     }
 }

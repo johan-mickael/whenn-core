@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\Venue;
 
 use App\Domain\Event\Event;
-use App\Domain\Tenant\Tenant;
 use App\Domain\Venue\ValueObject\Capacity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'venue')]
-#[ORM\Index(name: 'idx_venue_tenant', columns: ['tenant_id'])]
 #[ORM\HasLifecycleCallbacks]
 class Venue
 {
@@ -22,10 +20,6 @@ class Venue
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private string $id;
-
-    #[ORM\ManyToOne(targetEntity: Tenant::class, inversedBy: 'venues')]
-    #[ORM\JoinColumn(name: 'tenant_id', nullable: false)]
-    private Tenant $tenant;
 
     #[ORM\Column]
     private string $name;
@@ -61,7 +55,6 @@ class Venue
     private Collection $events;
 
     public function __construct(
-        Tenant $tenant,
         string $name,
         string $address,
         string $city,
@@ -71,7 +64,6 @@ class Venue
         ?float $latitude = null,
         ?float $longitude = null,
     ) {
-        $this->tenant = $tenant;
         $this->name = $name;
         $this->address = $address;
         $this->city = $city;
@@ -95,10 +87,7 @@ class Venue
     {
         return $this->id;
     }
-    public function getTenant(): Tenant
-    {
-        return $this->tenant;
-    }
+
     public function getName(): string
     {
         return $this->name;
