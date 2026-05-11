@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Infrastructure\Security;
+namespace App\Infrastructure\Security\Symfony;
 
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-final class SystemUser implements UserInterface, PasswordAuthenticatedUserInterface
+final class SymfonySystemUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public function __construct(
         private ?string $hashedPassword = null

@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Security;
+namespace App\Infrastructure\Security\Jwt;
 
 use App\Domain\User\User;
+use App\Infrastructure\Security\Symfony\SymfonySecurityUser;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 final class JwtTokenGenerator
@@ -16,6 +17,6 @@ final class JwtTokenGenerator
 
     public function generateFor(User $user): string
     {
-        return $this->jwtManager->create(new SecurityUser($user));
+        return $this->jwtManager->create(new SymfonySecurityUser($user));
     }
 }

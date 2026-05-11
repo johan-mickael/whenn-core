@@ -32,7 +32,7 @@ services:
 
     # Bind domain repository interfaces to Doctrine implementations
     App\Domain\Security\PasswordHasherInterface:
-        class: App\Infrastructure\Security\SymfonyPasswordHasher
+        class: App\Infrastructure\Security\Symfony\SymfonyPasswordHasher
 
     App\Domain\Tenant\TenantRepositoryInterface:
         class: App\Infrastructure\Persistence\Doctrine\Repository\Tenant\DoctrineTenantRepository

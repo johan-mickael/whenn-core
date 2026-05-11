@@ -6,7 +6,7 @@ namespace App\UI\Http\Controller\Auth;
 
 use App\Application\Auth\Query\AuthenticateUser;
 use App\Application\Auth\QueryHandler\AuthenticateUserHandler;
-use App\Infrastructure\Security\JwtTokenGenerator;
+use App\Infrastructure\Security\Jwt\JwtTokenGenerator;
 use App\UI\Http\Request\Auth\LoginRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

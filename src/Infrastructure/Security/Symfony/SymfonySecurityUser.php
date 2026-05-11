@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Infrastructure\Security;
+namespace App\Infrastructure\Security\Symfony;
 
 use App\Domain\User\User as DomainUser;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-final class SecurityUser implements UserInterface, PasswordAuthenticatedUserInterface
+final class SymfonySecurityUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public function __construct(
         private DomainUser $user

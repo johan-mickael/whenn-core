@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\Security;
+namespace App\Infrastructure\Security\Symfony;
 
 use App\Domain\Security\PasswordHasherInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -14,14 +14,14 @@ final class SymfonyPasswordHasher implements PasswordHasherInterface
     public function hash(string $plainPassword): string
     {
         return $this->hasher->hashPassword(
-            new SystemUser(),
+            new SymfonySystemUser(),
             $plainPassword
         );
     }
 
     public function verify(string $hashedPassword, string $plainPassword): bool
     {
-        $user = new SystemUser($hashedPassword);
+        $user = new SymfonySystemUser($hashedPassword);
 
         return $this->hasher->isPasswordValid(
             $user,

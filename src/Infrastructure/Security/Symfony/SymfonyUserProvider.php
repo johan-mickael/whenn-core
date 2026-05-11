@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\Security;
+namespace App\Infrastructure\Security\Symfony;
 
 use App\Domain\User\UserRepositoryInterface;
 use LogicException;
@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
-final class UserProvider implements UserProviderInterface
+final class SymfonyUserProvider implements UserProviderInterface
 {
     public function __construct(
         private UserRepositoryInterface $userRepository
@@ -24,7 +24,7 @@ final class UserProvider implements UserProviderInterface
             throw new UserNotFoundException();
         }
 
-        return new SecurityUser($user);
+        return new SymfonySecurityUser($user);
     }
 
     public function refreshUser(UserInterface $user): UserInterface
