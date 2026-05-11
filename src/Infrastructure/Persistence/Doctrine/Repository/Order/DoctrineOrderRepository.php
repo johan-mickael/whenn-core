@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Repository\Order;
+namespace App\Infrastructure\Persistence\Doctrine\Repository\Order;
 
 use App\Domain\Order\Order;
 use App\Domain\Order\OrderRepositoryInterface;

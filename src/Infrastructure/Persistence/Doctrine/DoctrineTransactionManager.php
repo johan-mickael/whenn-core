@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence;
+namespace App\Infrastructure\Persistence\Doctrine;
 
 use App\Domain\Common\TransactionManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;

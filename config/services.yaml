@@ -32,22 +32,22 @@ services:
 
     # Bind domain repository interfaces to Doctrine implementations
     App\Domain\Tenant\TenantRepositoryInterface:
-        class: App\Infrastructure\Persistence\Repository\Tenant\DoctrineTenantRepository
+        class: App\Infrastructure\Persistence\Doctrine\Repository\Tenant\DoctrineTenantRepository
 
     App\Domain\User\UserRepositoryInterface:
-        class: App\Infrastructure\Persistence\Repository\User\DoctrineUserRepository
+        class: App\Infrastructure\Persistence\Doctrine\Repository\User\DoctrineUserRepository
 
     App\Domain\Event\EventRepositoryInterface:
-        class: App\Infrastructure\Persistence\Repository\Event\DoctrineEventRepository
+        class: App\Infrastructure\Persistence\Doctrine\Repository\Event\DoctrineEventRepository
 
     App\Domain\Order\OrderRepositoryInterface:
-        class: App\Infrastructure\Persistence\Repository\Order\DoctrineOrderRepository
+        class: App\Infrastructure\Persistence\Doctrine\Repository\Order\DoctrineOrderRepository
 
     App\Domain\Venue\VenueRepositoryInterface:
-        class: App\Infrastructure\Persistence\Repository\Venue\DoctrineVenueRepository
+        class: App\Infrastructure\Persistence\Doctrine\Repository\Venue\DoctrineVenueRepository
 
     App\Domain\Common\TransactionManagerInterface:
-        class: App\Infrastructure\Persistence\DoctrineTransactionManager
+        class: App\Infrastructure\Persistence\Doctrine\DoctrineTransactionManager
 
 when@test:
     services:

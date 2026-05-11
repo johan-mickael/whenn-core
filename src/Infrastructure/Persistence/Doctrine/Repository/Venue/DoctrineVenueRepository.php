@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Repository\Venue;
+namespace App\Infrastructure\Persistence\Doctrine\Repository\Venue;
 
 use App\Domain\Venue\Venue;
 use App\Domain\Venue\VenueRepositoryInterface;
@@ -10,9 +10,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 
-final class DoctrineVenueRepository implements VenueRepositoryInterface
+final readonly class DoctrineVenueRepository implements VenueRepositoryInterface
 {
-    public function __construct(private readonly EntityManagerInterface $em) {}
+    public function __construct(private EntityManagerInterface $em) {}
 
     public function listVenues(): array
     {

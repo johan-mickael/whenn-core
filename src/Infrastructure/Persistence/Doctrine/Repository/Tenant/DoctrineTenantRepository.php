@@ -2,18 +2,24 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Repository\Tenant;
+namespace App\Infrastructure\Persistence\Doctrine\Repository\Tenant;
 
 use App\Domain\Tenant\Tenant;
 use App\Domain\Tenant\TenantRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 
-final class DoctrineTenantRepository implements TenantRepositoryInterface
+final readonly class DoctrineTenantRepository implements TenantRepositoryInterface
 {
-    public function __construct(private readonly EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em)
     {
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function findById(string $id): ?Tenant
     {
         return $this->em->find(Tenant::class, $id);

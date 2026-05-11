@@ -32,7 +32,6 @@ final class CreateVenueHandlerTest extends TestCase
         $this->transaction = $this->createMock(TransactionManagerInterface::class);
 
         $this->handler = new CreateVenueHandler(
-            tenants: $this->tenants,
             venues: $this->venues,
             venueAddressMustBeUnique: $this->venueAddressMustBeUnique,
             transaction: $this->transaction,
@@ -56,21 +55,6 @@ final class CreateVenueHandlerTest extends TestCase
 
         $this->assertSame('Grand Hall', $venue->getName());
         $this->assertSame(500, $venue->getCapacity());
-    }
-
-    public function test_throws_when_tenant_not_found(): void
-    {
-        $this->tenants->method('findById')->willReturn(null);
-
-        $this->expectException(TenantNotFound::class);
-
-        ($this->handler)(new CreateVenue(
-            name: 'Grand Hall',
-            address: '1 rue de la Paix',
-            city: 'Paris',
-            country: 'FR',
-            capacity: 500,
-        ));
     }
 
     public function test_throws_when_capacity_is_zero(): void

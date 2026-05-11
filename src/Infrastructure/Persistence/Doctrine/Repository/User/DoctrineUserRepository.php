@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Repository\User;
+namespace App\Infrastructure\Persistence\Doctrine\Repository\User;
 
 use App\Domain\User\User;
 use App\Domain\User\UserRepositoryInterface;
