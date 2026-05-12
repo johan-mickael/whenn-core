@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\User\Exception;
+
+use DomainException;
 
 final class InvalidRole extends UserException
 {
-    public static function create(string $field): self
+    public static function fromValue(string $value): self
     {
-        return new self();
+        return new self(sprintf('Invalid role "%s".', $value));
     }
 }

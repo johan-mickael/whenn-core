@@ -26,16 +26,13 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Infrastructure\Http\Listener\DomainExceptionListener:
+    App\Infrastructure\Http\Listener\SymfonyDomainExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
 
     # Bind domain repository interfaces to Doctrine implementations
     App\Domain\Security\PasswordHasherInterface:
-        class: App\Infrastructure\Security\Symfony\SymfonyPasswordHasher
-
-    App\Domain\Tenant\TenantRepositoryInterface:
-        class: App\Infrastructure\Persistence\Doctrine\Repository\Tenant\DoctrineTenantRepository
+        class: App\Infrastructure\Security\User\SymfonyPasswordHasher
 
     App\Domain\User\UserRepositoryInterface:
         class: App\Infrastructure\Persistence\Doctrine\Repository\User\DoctrineUserRepository

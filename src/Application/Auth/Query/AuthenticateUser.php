@@ -13,7 +13,6 @@ final readonly class AuthenticateUser
     public PlainPassword $password;
 
     public function __construct(
-        public string $tenantSlug,
         string $email,
         string $password,
     ) {

@@ -1,17 +1,22 @@
 <?php
 
-namespace App\Infrastructure\Security\Symfony;
+namespace App\Infrastructure\Security\User;
 
 use App\Domain\User\User as DomainUser;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-final class SymfonySecurityUser implements UserInterface, PasswordAuthenticatedUserInterface
+final readonly class SymfonySecurityUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public function __construct(
         private DomainUser $user
     )
     {
+    }
+
+    public function getDomainUser(): DomainUser
+    {
+        return $this->user;
     }
 
     public function getUserIdentifier(): string
@@ -21,7 +26,7 @@ final class SymfonySecurityUser implements UserInterface, PasswordAuthenticatedU
 
     public function getRoles(): array
     {
-        return ['ROLE_' . $this->user->role()->value];
+        return $this->user->role()->securityRoles();
     }
 
     public function eraseCredentials(): void

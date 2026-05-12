@@ -8,6 +8,5 @@ final readonly class GetVenueById
 {
     public function __construct(
         public string $id,
-        public string $tenantId,
     ) {}
 }

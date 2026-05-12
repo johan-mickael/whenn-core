@@ -12,9 +12,8 @@ final class UserMapper
 {
     public static function toDomain(UserEntity $userEntity): User
     {
-        return User::create(
+        return User::register(
             $userEntity->id,
-            $userEntity->tenantId,
             Email::create($userEntity->email),
             $userEntity->passwordHash,
             $userEntity->createdAt,
@@ -29,7 +28,6 @@ final class UserMapper
         $userEntity = new UserEntity();
 
         $userEntity->id = $user->id();
-        $userEntity->tenantId = $user->tenantId();
         $userEntity->email = (string) $user->email();
         $userEntity->passwordHash = $user->passwordHash();
         $userEntity->role = $user->role();

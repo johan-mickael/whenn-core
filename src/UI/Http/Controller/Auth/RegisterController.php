@@ -26,7 +26,6 @@ final class RegisterController extends AbstractController
     ): JsonResponse
     {
         $user = ($this->handler)(new RegisterUser(
-            tenantSlug: $dto->tenant_slug,
             email: $dto->email,
             password: $dto->password,
             firstName: $dto->first_name,

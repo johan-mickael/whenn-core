@@ -6,7 +6,7 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         app_user_provider:
-            id: App\Infrastructure\Security\Symfony\SymfonyUserProvider
+            id: App\Infrastructure\Security\User\SymfonyUserProvider
 
     firewalls:
         dev:
@@ -30,9 +30,6 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
-
-    role_hierarchy:
-        ROLE_ADMIN: ROLE_USER
 
 when@test:
     security:

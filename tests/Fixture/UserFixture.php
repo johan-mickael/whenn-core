@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Fixture;
 
 use App\Domain\User\Role;
-use App\Infrastructure\Persistence\Doctrine\Entity\TenantEntity;
 use App\Infrastructure\Persistence\Doctrine\Entity\UserEntity;
 use App\Tests\Fixture\Security\SymfonyUserProxy;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -25,17 +24,10 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        /** @var TenantEntity $tenant */
-        $tenant = $this->getReference(
-            TenantFixture::ACME_TENANT,
-            TenantEntity::class
-        );
-
         foreach ($this->users() as [$ref, $email, $role]) {
             $user = new UserEntity();
 
             $user->id = uuid_create(UUID_TYPE_RANDOM);
-            $user->tenantId = $tenant->id;
             $user->email = $email;
             $user->role = $role;
             $user->createdAt = new \DateTimeImmutable();
@@ -63,6 +55,6 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
 
     public function getDependencies(): array
     {
-        return [TenantFixture::class];
+        return [];
     }
 }

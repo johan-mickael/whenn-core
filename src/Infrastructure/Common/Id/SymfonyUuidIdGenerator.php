@@ -5,7 +5,7 @@ namespace App\Infrastructure\Common\Id;
 use App\Domain\Common\Id\IdGeneratorInterface;
 use Symfony\Component\Uid\Uuid;
 
-final class UuidIdGenerator implements IdGeneratorInterface
+final class SymfonyUuidIdGenerator implements IdGeneratorInterface
 {
     public function generate(): string
     {

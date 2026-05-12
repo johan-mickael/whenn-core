@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Event;
 
-use App\Domain\Tenant\Tenant;
 use App\Domain\Ticket\TicketCategory;
 use App\Domain\Venue\Venue;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,8 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'event')]
-#[ORM\UniqueConstraint(name: 'uq_event_tenant_slug', columns: ['tenant_id', 'slug'])]
-#[ORM\Index(name: 'idx_event_tenant', columns: ['tenant_id'])]
 #[ORM\Index(name: 'idx_event_status', columns: ['status'])]
 #[ORM\HasLifecycleCallbacks]
 class Event
@@ -24,10 +21,6 @@ class Event
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private string $id;
-
-    #[ORM\ManyToOne(targetEntity: Tenant::class, inversedBy: 'events')]
-    #[ORM\JoinColumn(name: 'tenant_id', nullable: false)]
-    private Tenant $tenant;
 
     #[ORM\ManyToOne(targetEntity: Venue::class, inversedBy: 'events')]
     #[ORM\JoinColumn(name: 'venue_id', nullable: false)]
@@ -64,7 +57,6 @@ class Event
     private Collection $ticketCategories;
 
     public function __construct(
-        Tenant $tenant,
         Venue $venue,
         string $name,
         string $slug,
@@ -74,7 +66,6 @@ class Event
         ?string $imageUrl = null,
         EventStatus $status = EventStatus::DRAFT,
     ) {
-        $this->tenant = $tenant;
         $this->venue = $venue;
         $this->name = $name;
         $this->slug = $slug;
@@ -111,10 +102,7 @@ class Event
     {
         return $this->id;
     }
-    public function getTenant(): Tenant
-    {
-        return $this->tenant;
-    }
+
     public function getVenue(): Venue
     {
         return $this->venue;

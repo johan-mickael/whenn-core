@@ -9,9 +9,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class RegisterRequest
 {
     public function __construct(
-        #[Assert\NotBlank(message: 'tenant_slug is required.')]
-        public readonly ?string $tenant_slug,
-
         #[Assert\NotBlank(message: 'email is required.')]
         #[Assert\Email(message: 'Invalid email format.')]
         public readonly ?string $email,
@@ -28,7 +25,6 @@ final class RegisterRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            tenant_slug: $data['tenant_slug'] ?? '',
             email: $data['email'] ?? '',
             password: $data['password'] ?? '',
             first_name: $data['first_name'] ?? null,

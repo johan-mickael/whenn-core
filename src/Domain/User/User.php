@@ -2,16 +2,15 @@
 
 namespace App\Domain\User;
 
-use App\Domain\User\Exception\InvalidName;
-use App\Domain\User\Exception\InvalidTenantId;
+use App\Domain\Security\Permission;
+use App\Domain\User\Exception\InvalidUserName;
 use App\Domain\User\ValueObject\Email;
 use DateTimeImmutable;
 
 final class User
 {
     private function __construct(
-        private string            $id,
-        private string            $tenantId,
+        private readonly string   $id,
         private Email             $email,
         private string            $passwordHash,
         private DateTimeImmutable $createdAt,
@@ -22,25 +21,22 @@ final class User
     {
     }
 
-    public static function create(
-        string             $id,
-        string             $tenantId,
-        Email              $email,
-        string             $passwordHash,
-        \DateTimeImmutable $registeredAt,
-        Role               $role = Role::BUYER,
-        ?string            $firstName = null,
-        ?string            $lastName = null,
+    public static function register(
+        string            $id,
+        Email             $email,
+        string            $passwordHash,
+        DateTimeImmutable $registeredAt,
+        Role              $role = Role::BUYER,
+        ?string           $firstName = null,
+        ?string           $lastName = null,
     ): self
     {
 
-        self::assertTenantId($tenantId);
-        self::assertName($firstName, 'first_name');
-        self::assertName($lastName, 'last_name');
+        self::assertFirstName($firstName);
+        self::assertLastName($lastName);
 
         return new self(
             $id,
-            $tenantId,
             $email,
             $passwordHash,
             $registeredAt,
@@ -50,17 +46,39 @@ final class User
         );
     }
 
-    private static function assertTenantId(?string $tenantId): void
+    public function hasPermission(Permission $permission): bool
     {
-        if ($tenantId === '') {
-            throw InvalidTenantId::create($tenantId);
+        return $this->role()->hasPermission($permission);
+    }
+
+    public function promoteToAdmin(): void
+    {
+        $this->role = Role::ADMIN;
+    }
+
+    public function rename(
+        ?string $firstName,
+        ?string $lastName,
+    ): void
+    {
+        self::assertFirstName($firstName);
+        self::assertLastName($lastName);
+
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
+    }
+
+    private static function assertFirstName(?string $firstName): void
+    {
+        if ($firstName === '' || is_null($firstName)) {
+            throw InvalidUserName::firstName();
         }
     }
 
-    private static function assertName(?string $name, ?string $field): void
+    private static function assertLastName(?string $lastName): void
     {
-        if ($name === '' || is_null($name)) {
-            throw InvalidName::create($field);
+        if ($lastName === '' || is_null($lastName)) {
+            throw InvalidUserName::lastName();
         }
     }
 
@@ -79,11 +97,6 @@ final class User
         return $this->role;
     }
 
-    public function tenantId(): string
-    {
-        return $this->tenantId;
-    }
-
     public function passwordHash(): string
     {
         return $this->passwordHash;
@@ -99,7 +112,7 @@ final class User
         return $this->lastName;
     }
 
-    public function createdAt(): \DateTimeImmutable
+    public function createdAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }

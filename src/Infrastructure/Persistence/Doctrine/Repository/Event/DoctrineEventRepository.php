@@ -19,19 +19,6 @@ final class DoctrineEventRepository implements EventRepositoryInterface
         return $this->em->find(Event::class, $id);
     }
 
-    public function findByTenantAndSlug(string $tenantId, string $slug): ?Event
-    {
-        return $this->em->getRepository(Event::class)->findOneBy([
-            'tenant' => $tenantId,
-            'slug' => $slug,
-        ]);
-    }
-
-    public function findByTenant(string $tenantId): array
-    {
-        return $this->em->getRepository(Event::class)->findBy(['tenant' => $tenantId]);
-    }
-
     public function save(Event $event): void
     {
         $this->em->persist($event);

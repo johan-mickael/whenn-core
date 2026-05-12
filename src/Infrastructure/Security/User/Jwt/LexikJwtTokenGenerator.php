@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Security\Jwt;
+namespace App\Infrastructure\Security\User\Jwt;
 
 use App\Domain\User\User;
-use App\Infrastructure\Security\Symfony\SymfonySecurityUser;
+use App\Infrastructure\Security\User\SymfonySecurityUser;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
-final class JwtTokenGenerator
+final readonly class LexikJwtTokenGenerator
 {
     public function __construct(
-        private readonly JWTTokenManagerInterface $jwtManager,
+        private JWTTokenManagerInterface $jwtManager,
     ) {
     }
 

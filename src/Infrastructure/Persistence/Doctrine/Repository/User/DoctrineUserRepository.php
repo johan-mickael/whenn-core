@@ -30,28 +30,6 @@ final class DoctrineUserRepository implements UserRepositoryInterface
         return $entity ? UserMapper::toDomain($entity) : null;
     }
 
-    public function findByTenantAndEmail(string $tenantId, string $email): ?User
-    {
-        $entity = $this->em->getRepository(UserEntity::class)->findOneBy([
-            'tenantId' => $tenantId,
-            'email' => $email,
-        ]);
-
-        return $entity ? UserMapper::toDomain($entity) : null;
-    }
-
-    public function findByTenant(string $tenantId): array
-    {
-        $entities = $this->em->getRepository(UserEntity::class)->findBy([
-            'tenantId' => $tenantId,
-        ]);
-
-        return array_map(
-            fn(UserEntity $e) => UserMapper::toDomain($e),
-            $entities
-        );
-    }
-
     public function save(User $user): void
     {
         $entity = UserMapper::toEntity($user);

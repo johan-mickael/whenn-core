@@ -4,25 +4,24 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Http\Listener;
 
-use App\Domain\Tenant\Exception\TenantNotFound;
 use App\Domain\User\Exception\InvalidCredentials;
 use App\Domain\User\Exception\UserAlreadyExists;
 use App\Domain\Venue\Exception\DuplicateVenueAddress;
 use App\Domain\Venue\Exception\VenueNotFound;
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
-final class DomainExceptionListener
+final class SymfonyDomainExceptionListener
 {
-    private const MAP = [
-        TenantNotFound::class => Response::HTTP_NOT_FOUND,
+    private const array MAP = [
         UserAlreadyExists::class => Response::HTTP_CONFLICT,
         VenueNotFound::class => Response::HTTP_NOT_FOUND,
         DuplicateVenueAddress::class => Response::HTTP_CONFLICT,
         InvalidCredentials::class => Response::HTTP_UNAUTHORIZED,
-        \InvalidArgumentException::class => Response::HTTP_UNPROCESSABLE_ENTITY,
+        InvalidArgumentException::class => Response::HTTP_UNPROCESSABLE_ENTITY,
     ];
 
     public function onKernelException(ExceptionEvent $event): void

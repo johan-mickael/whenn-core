@@ -6,8 +6,6 @@ namespace App\Application\Auth\QueryHandler;
 
 use App\Application\Auth\Query\AuthenticateUser;
 use App\Domain\Security\PasswordHasherInterface;
-use App\Domain\Tenant\Exception\TenantNotFound;
-use App\Domain\Tenant\TenantRepositoryInterface;
 use App\Domain\User\Exception\InvalidCredentials;
 use App\Domain\User\User;
 use App\Domain\User\UserRepositoryInterface;
@@ -15,7 +13,6 @@ use App\Domain\User\UserRepositoryInterface;
 final class AuthenticateUserHandler
 {
     public function __construct(
-        private readonly TenantRepositoryInterface $tenants,
         private readonly UserRepositoryInterface   $users,
         private readonly PasswordHasherInterface   $hasher,
     )
@@ -24,11 +21,7 @@ final class AuthenticateUserHandler
 
     public function __invoke(AuthenticateUser $query): User
     {
-        $tenant = $this->tenants->findBySlug($query->tenantSlug)
-            ?? throw TenantNotFound::forSlug($query->tenantSlug);
-
-        $user = $this->users->findByTenantAndEmail(
-            $tenant->id(),
+        $user = $this->users->findByEmail(
             (string)$query->email
         );
 

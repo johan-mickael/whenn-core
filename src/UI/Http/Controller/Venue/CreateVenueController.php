@@ -15,7 +15,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/venues', methods: ['POST'])]
-#[IsGranted('ROLE_USER')]
 final class CreateVenueController extends AbstractController
 {
     public function __construct(
@@ -42,7 +41,7 @@ final class CreateVenueController extends AbstractController
             'address'   => $venue->address(),
             'city'      => $venue->city(),
             'country'   => $venue->country(),
-            'capacity'  => $venue->capacity(),
+            'capacity'  => $venue->capacity()->value,
             'zipCode'   => $venue->zipCode(),
             'latitude'  => $venue->latitude(),
             'longitude' => $venue->longitude(),

@@ -16,9 +16,6 @@ class UserEntity
     #[ORM\Column(type: 'guid')]
     public string $id;
 
-    #[ORM\Column(type: 'guid')]
-    public string $tenantId;
-
     #[ORM\Column]
     public string $email;
 

@@ -15,6 +15,6 @@ final class ListVenuesHandler
 
     public function __invoke(ListVenues $query): array
     {
-        return $this->venueRepository->findByTenant($query->tenantId);
+        return $this->venueRepository->listVenues();
     }
 }

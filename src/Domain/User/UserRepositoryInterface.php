@@ -8,9 +8,6 @@ interface UserRepositoryInterface
 {
     public function findById(string $id): ?User;
     public function findByEmail(string $email): ?User;
-    public function findByTenantAndEmail(string $tenantId, string $email): ?User;
-    /** @return User[] */
-    public function findByTenant(string $tenantId): array;
     public function save(User $user): void;
     public function remove(User $user): void;
 }

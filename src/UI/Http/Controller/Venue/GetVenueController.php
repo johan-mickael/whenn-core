@@ -24,19 +24,18 @@ final class GetVenueController extends AbstractController
         $user  = $this->getUser();
         $venue = ($this->handler)(new GetVenueById(
             id: $id,
-            tenantId: $user->getTenant()->getId(),
         ));
 
         return $this->json([
-            'id'        => $venue->getId(),
-            'name'      => $venue->getName(),
-            'address'   => $venue->getAddress(),
-            'city'      => $venue->getCity(),
-            'country'   => $venue->getCountry(),
-            'capacity'  => $venue->getCapacity(),
-            'zipCode'   => $venue->getZipCode(),
-            'latitude'  => $venue->getLatitude(),
-            'longitude' => $venue->getLongitude(),
+            'id'        => $venue->id(),
+            'name'      => $venue->name(),
+            'address'   => $venue->address(),
+            'city'      => $venue->city(),
+            'country'   => $venue->country(),
+            'capacity'  => $venue->capacity(),
+            'zipCode'   => $venue->zipCode(),
+            'latitude'  => $venue->latitude(),
+            'longitude' => $venue->longitude(),
         ]);
     }
 }
