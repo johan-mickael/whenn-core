@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Auth\CommandHandler;
 
-use App\Application\Auth\Command\RegisterUser;
+use App\Application\Auth\Command\RegisterUserCommand;
 use App\Domain\Common\Security\PasswordHasherInterface;
 use App\Domain\Common\Transaction\TransactionManagerInterface;
-use App\Domain\User\Service\UserEmailMustBeUnique;
+use App\Domain\User\Rule\UserEmailMustBeUnique;
 use App\Domain\User\User;
 use App\Domain\User\UserRepositoryInterface;
 use App\Domain\User\ValueObject\UserId;
@@ -23,7 +23,7 @@ final readonly class RegisterUserHandler
         private ClockInterface $clock,
     ) {}
 
-    public function __invoke(RegisterUser $command): User
+    public function __invoke(RegisterUserCommand $command): User
     {
         $passwordHash = $this->passwordHasher->hash($command->password->toString());
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\UI\Http\Controller\Auth;
 
-use App\Application\Auth\Query\AuthenticateUser;
+use App\Application\Auth\Query\AuthenticateUserQuery;
 use App\Application\Auth\QueryHandler\AuthenticateUserHandler;
 use App\Infrastructure\Security\User\Jwt\LexikJwtTokenGenerator;
 use App\UI\Http\Request\Auth\LoginRequest;
@@ -24,7 +24,7 @@ final class LoginController extends AbstractController
     public function __invoke(
         #[MapRequestPayload] LoginRequest $dto,
     ): JsonResponse {
-        $user = ($this->handler)(new AuthenticateUser(
+        $user = ($this->handler)(new AuthenticateUserQuery(
             email: $dto->email,
             password: $dto->password,
         ));

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Auth\QueryHandler;
 
-use App\Application\Auth\Query\AuthenticateUser;
+use App\Application\Auth\Query\AuthenticateUserQuery;
 use App\Domain\Common\Security\PasswordHasherInterface;
 use App\Domain\User\Exception\InvalidCredentials;
 use App\Domain\User\User;
@@ -19,7 +19,7 @@ final class AuthenticateUserHandler
     {
     }
 
-    public function __invoke(AuthenticateUser $query): User
+    public function __invoke(AuthenticateUserQuery $query): User
     {
         $user = $this->users->findByEmail(
             (string)$query->email

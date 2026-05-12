@@ -2,27 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\User\ValueObject;
+namespace App\Domain\Venue\ValueObject;
 
 use App\Domain\Common\Id\IdInterface;
-use App\Domain\User\Exception\InvalidUserId;
+use App\Domain\Venue\Exception\InvalidVenueId;
 
-final readonly class UserId implements IdInterface
+final readonly class VenueId implements IdInterface
 {
     private function __construct(private string $value) {}
 
     public static function fromString(string $value): self
     {
         if (!uuid_is_valid($value)) {
-            throw new InvalidUserId($value);
+            throw new InvalidVenueId($value);
         }
 
         return new self($value);
-    }
-
-    public static function generate(): self
-    {
-        return new self(uuid_create(UUID_TYPE_RANDOM));
     }
 
     public function __toString(): string

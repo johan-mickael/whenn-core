@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\UI\Http\Controller\Auth;
 
-use App\Application\Auth\Command\RegisterUser;
+use App\Application\Auth\Command\RegisterUserCommand;
 use App\Application\Auth\CommandHandler\RegisterUserHandler;
 use App\UI\Http\Request\Auth\RegisterRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,7 +25,7 @@ final class RegisterController extends AbstractController
         #[MapRequestPayload] RegisterRequest $dto,
     ): JsonResponse
     {
-        $user = ($this->handler)(new RegisterUser(
+        $user = ($this->handler)(new RegisterUserCommand(
             email: $dto->email,
             password: $dto->password,
             firstName: $dto->first_name,

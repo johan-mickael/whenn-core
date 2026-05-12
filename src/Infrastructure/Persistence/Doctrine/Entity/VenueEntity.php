@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'venue')]
-#[ORM\HasLifecycleCallbacks]
 class VenueEntity
 {
     #[ORM\Id]
@@ -19,46 +18,23 @@ class VenueEntity
     public string $name;
 
     #[ORM\Column]
-    public string $address;
+    public string $street;
 
     #[ORM\Column]
     public string $city;
 
     #[ORM\Column]
+    public string $zipCode;
+
+    #[ORM\Column]
     public string $country;
 
-    #[ORM\Column(nullable: true)]
-    public ?string $zipCode = null;
+    #[ORM\Column]
+    public float $latitude;
 
-    #[ORM\Column(nullable: true)]
-    public ?float $latitude = null;
-
-    #[ORM\Column(nullable: true)]
-    public ?float $longitude = null;
+    #[ORM\Column]
+    public float $longitude;
 
     #[ORM\Column(type: 'integer')]
     public int $capacity;
-
-    #[ORM\Column]
-    public \DateTimeImmutable $createdAt;
-
-    #[ORM\Column]
-    public \DateTimeImmutable $updatedAt;
-
-    #[ORM\PrePersist]
-    public function onPrePersist(): void
-    {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
-
-        if (!isset($this->id)) {
-            $this->id = uuid_create(UUID_TYPE_RANDOM);
-        }
-    }
-
-    #[ORM\PreUpdate]
-    public function onPreUpdate(): void
-    {
-        $this->updatedAt = new \DateTimeImmutable();
-    }
 }

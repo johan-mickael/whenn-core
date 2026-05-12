@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\User\Service;
+namespace App\Domain\User\Rule;
 
 use App\Domain\User\Exception\UserAlreadyExists;
 use App\Domain\User\User;

@@ -16,14 +16,14 @@ final readonly class AuthorizationService implements AuthorizationServiceInterfa
     public function authorize(
         UserContext $actor,
         Action $action,
-        object $resource,
+        Subject|string $subject,
     ): bool {
         foreach ($this->policies as $policy) {
-            if ($policy->supports($resource)) {
+            if ($policy->supports($subject)) {
                 return $policy->authorize(
                     $actor,
                     $action,
-                    $resource,
+                    $subject,
                 );
             }
         }

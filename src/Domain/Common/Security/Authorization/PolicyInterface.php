@@ -7,12 +7,12 @@ namespace App\Domain\Common\Security\Authorization;
 interface PolicyInterface
 {
     public function supports(
-        object $subject,
+        Subject|string $subject,
     ): bool;
 
     public function authorize(
         UserContext $actor,
         Action $action,
-        object $subject,
+        Subject|string $subject,
     ): bool;
 }

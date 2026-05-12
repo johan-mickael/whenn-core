@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\UI\Http\Controller\Venue;
 
-use App\Application\Venue\Command\CreateVenue;
+use App\Application\Venue\Command\CreateVenueCommand;
 use App\Application\Venue\CommandHandler\CreateVenueHandler;
 use App\UI\Http\Controller\HttpController;
 use App\UI\Http\Request\Venue\CreateVenueRequest;
@@ -25,34 +25,24 @@ class CreateVenueController extends HttpController {
     function __invoke(
         #[MapRequestPayload] CreateVenueRequest $dto,
     ): JsonResponse {
-        $createVenueCommand = new CreateVenue(
+        $createVenueCommand = new CreateVenueCommand(
             name: $dto->name,
-            address: $dto->address,
+            street: $dto->street,
+            zipCode: $dto->zipCode,
             city: $dto->city,
             country: $dto->country,
             capacity: $dto->capacity,
-            zipCode: $dto->zipCode,
             latitude: $dto->latitude,
             longitude: $dto->longitude,
         );
 
-        $venue = ($this->handler)(
+        $venueResponse = ($this->handler)(
             $createVenueCommand,
             $this->getUserContext(),
         );
 
         return $this->json(
-            [
-                'id'        => $venue->id(),
-                'name'      => $venue->name(),
-                'address'   => $venue->address(),
-                'city'      => $venue->city(),
-                'country'   => $venue->country(),
-                'capacity'  => $venue->capacity()->value,
-                'zipCode'   => $venue->zipCode(),
-                'latitude'  => $venue->latitude(),
-                'longitude' => $venue->longitude(),
-            ],
+            $venueResponse,
             Response::HTTP_CREATED,
         );
     }

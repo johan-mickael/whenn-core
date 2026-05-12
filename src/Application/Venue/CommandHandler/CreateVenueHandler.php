@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace App\Application\Venue\CommandHandler;
 
-use App\Application\Venue\Command\CreateVenue;
+use App\Application\Venue\Command\CreateVenueCommand;
+use App\Application\Venue\Result\CreateVenueResult;
 use App\Domain\Common\Id\IdGeneratorInterface;
 use App\Domain\Common\Security\Authorization\Action;
 use App\Domain\Common\Security\Authorization\AuthorizationServiceInterface;
 use App\Domain\Common\Security\Authorization\UserContext;
 use App\Domain\Common\Transaction\TransactionManagerInterface;
 use App\Domain\Venue\Exception\CreateVenueForbidden;
-use App\Domain\Venue\Security\Authorization\CreateVenue as CreateVenueAuthorization;
-use App\Domain\Venue\Service\VenueAddressMustBeUnique;
+use App\Domain\Venue\Rule\VenueAddressMustBeUnique;
+use App\Domain\Venue\Rule\VenueNameMustBeUnique;
+use App\Domain\Venue\ValueObject\Address;
+use App\Domain\Venue\ValueObject\Capacity;
+use App\Domain\Venue\ValueObject\GeoLocation;
+use App\Domain\Venue\ValueObject\VenueId;
 use App\Domain\Venue\Venue;
 use App\Domain\Venue\VenueRepositoryInterface;
 
@@ -20,46 +25,62 @@ final readonly
 class CreateVenueHandler
 {
     public function __construct(
-        private VenueRepositoryInterface      $venues,
-        private VenueAddressMustBeUnique      $venueAddressMustBeUnique,
-        private TransactionManagerInterface   $transaction,
-        private IdGeneratorInterface          $idGenerator,
+        private VenueRepositoryInterface $venues,
+        private VenueNameMustBeUnique $venueNameMustBeUnique,
+        private VenueAddressMustBeUnique $venueAddressMustBeUnique,
+        private TransactionManagerInterface $transaction,
         private AuthorizationServiceInterface $authorization,
-    )
-    {
+        private IdGeneratorInterface $idGenerator,
+    ) {
     }
 
     public function __invoke(
-        CreateVenue $command,
+        CreateVenueCommand $command,
         UserContext $actor,
-    ): Venue
-    {
+    ): CreateVenueResult {
 
         if (!$this->authorization->authorize(
             $actor,
             Action::CREATE,
-            new CreateVenueAuthorization(),
+            Venue::class,
         )) {
             throw new CreateVenueForbidden();
         }
 
         $venue = Venue::create(
-            id: $this->idGenerator->generate(),
+            id: VenueId::fromString(
+                $this->idGenerator->generate(),
+            ),
             name: $command->name,
-            address: $command->address,
-            city: $command->city,
-            country: $command->country,
-            capacity: $command->capacity,
-            zipCode: $command->zipCode,
-            latitude: $command->latitude,
-            longitude: $command->longitude,
+            address: Address::create(
+                street: $command->street,
+                city: $command->city,
+                zipCode: $command->zipCode,
+                country: $command->country,
+            ),
+            location: GeoLocation::create(
+                latitude: $command->latitude,
+                longitude: $command->longitude,
+            ),
+            capacity: Capacity::fromInteger($command->capacity),
         );
 
+        $this->venueNameMustBeUnique->check($venue);
         $this->venueAddressMustBeUnique->check($venue);
 
         $this->venues->save($venue);
         $this->transaction->flush();
 
-        return $venue;
+        return new CreateVenueResult(
+            (string)$venue->id(),
+            $venue->name(),
+            $venue->address()->street(),
+            $venue->address()->city(),
+            $venue->address()->country(),
+            $venue->address()->zipCode(),
+            $venue->capacity()->value,
+            $venue->location()->latitude(),
+            $venue->location()->longitude(),
+        );
     }
 }

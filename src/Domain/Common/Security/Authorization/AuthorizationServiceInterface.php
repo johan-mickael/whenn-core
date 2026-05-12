@@ -7,6 +7,6 @@ interface AuthorizationServiceInterface
     public function authorize(
         UserContext $actor,
         Action $action,
-        object $resource,
+        Subject|string $subject,
     ): bool;
 }

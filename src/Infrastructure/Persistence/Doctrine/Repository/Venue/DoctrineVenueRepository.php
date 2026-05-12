@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Venue;
 
+use App\Domain\Venue\ValueObject\Address;
 use App\Domain\Venue\Venue;
 use App\Domain\Venue\VenueRepositoryInterface;
 use App\Infrastructure\Persistence\Doctrine\Entity\VenueEntity;
@@ -51,12 +52,28 @@ final readonly class DoctrineVenueRepository implements VenueRepositoryInterface
         $this->em->remove($entity);
     }
 
-    public function findByAddress(string $address): ?Venue
+    public function findByName(string $name): ?Venue
     {
         $entity = $this->em
             ->getRepository(VenueEntity::class)
             ->findOneBy([
-                'address' => $address,
+                'name' => $name,
+            ]);
+
+        return $entity
+            ? VenueMapper::toDomain($entity)
+            : null;
+    }
+
+    public function findByAddress(Address $address): ?Venue
+    {
+        $entity = $this->em
+            ->getRepository(VenueEntity::class)
+            ->findOneBy([
+                'street' => $address->street(),
+                'city' => $address->city(),
+                'country' => $address->country(),
+                'zipCode' => $address->zipCode(),
             ]);
 
         return $entity

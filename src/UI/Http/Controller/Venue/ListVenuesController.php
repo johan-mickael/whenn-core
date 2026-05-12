@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\UI\Http\Controller\Venue;
 
-use App\Application\Venue\Query\ListVenues;
+use App\Application\Venue\Query\ListVenuesQuery;
 use App\Application\Venue\QueryHandler\ListVenuesHandler;
 use App\UI\Http\Controller\HttpController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,14 +19,8 @@ final class ListVenuesController extends HttpController
 
     public function __invoke(): JsonResponse
     {
-        $venues = ($this->handler)(new ListVenues);
+        $venuesResult = ($this->handler)(new ListVenuesQuery(), $this->getUserContext());
 
-        return $this->json(array_map(fn($venue) => [
-            'id'        => $venue->id(),
-            'name'      => $venue->name(),
-            'city'      => $venue->city(),
-            'country'   => $venue->country(),
-            'capacity'  => $venue->capacity()->value,
-        ], $venues));
+        return $this->json($venuesResult);
     }
 }

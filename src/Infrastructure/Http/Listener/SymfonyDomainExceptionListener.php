@@ -6,7 +6,7 @@ namespace App\Infrastructure\Http\Listener;
 
 use App\Domain\User\Exception\InvalidCredentials;
 use App\Domain\User\Exception\UserAlreadyExists;
-use App\Domain\Venue\Exception\DuplicateVenueAddress;
+use App\Domain\Venue\Exception\DuplicateVenueName;
 use App\Domain\Venue\Exception\VenueNotFound;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,7 +19,7 @@ final class SymfonyDomainExceptionListener
     private const array MAP = [
         UserAlreadyExists::class => Response::HTTP_CONFLICT,
         VenueNotFound::class => Response::HTTP_NOT_FOUND,
-        DuplicateVenueAddress::class => Response::HTTP_CONFLICT,
+        DuplicateVenueName::class => Response::HTTP_CONFLICT,
         InvalidCredentials::class => Response::HTTP_UNAUTHORIZED,
         InvalidArgumentException::class => Response::HTTP_UNPROCESSABLE_ENTITY,
     ];

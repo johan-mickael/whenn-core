@@ -6,6 +6,7 @@ namespace App\Domain\Common\Security\Authorization;
 
 enum Action: string
 {
+    case LIST = 'LIST';
     case CREATE = 'CREATE';
     case DELETE = 'DELETE';
     case VIEW = 'VIEW';
