@@ -6,6 +6,7 @@ namespace App\Infrastructure\Persistence\Doctrine\Mapper;
 
 use App\Domain\User\User;
 use App\Domain\User\ValueObject\Email;
+use App\Domain\User\ValueObject\UserId;
 use App\Infrastructure\Persistence\Doctrine\Entity\UserEntity;
 
 final class UserMapper
@@ -13,7 +14,7 @@ final class UserMapper
     public static function toDomain(UserEntity $userEntity): User
     {
         return User::register(
-            $userEntity->id,
+            UserId::fromString($userEntity->id),
             Email::create($userEntity->email),
             $userEntity->passwordHash,
             $userEntity->createdAt,
@@ -27,7 +28,7 @@ final class UserMapper
     {
         $userEntity = new UserEntity();
 
-        $userEntity->id = $user->id();
+        $userEntity->id = (string) $user->id();
         $userEntity->email = (string) $user->email();
         $userEntity->passwordHash = $user->passwordHash();
         $userEntity->role = $user->role();

@@ -2,15 +2,16 @@
 
 namespace App\Domain\User;
 
-use App\Domain\Security\Permission;
+use App\Domain\Common\Security\Authorization\Permission;
 use App\Domain\User\Exception\InvalidUserName;
 use App\Domain\User\ValueObject\Email;
+use App\Domain\User\ValueObject\UserId;
 use DateTimeImmutable;
 
 final class User
 {
     private function __construct(
-        private readonly string   $id,
+        private readonly UserId   $id,
         private Email             $email,
         private string            $passwordHash,
         private DateTimeImmutable $createdAt,
@@ -22,7 +23,7 @@ final class User
     }
 
     public static function register(
-        string            $id,
+        UserId            $id,
         Email             $email,
         string            $passwordHash,
         DateTimeImmutable $registeredAt,
@@ -82,7 +83,7 @@ final class User
         }
     }
 
-    public function id(): string
+    public function id(): UserId
     {
         return $this->id;
     }

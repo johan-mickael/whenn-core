@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Auth\QueryHandler;
 
 use App\Application\Auth\Query\AuthenticateUser;
-use App\Domain\Security\PasswordHasherInterface;
+use App\Domain\Common\Security\PasswordHasherInterface;
 use App\Domain\User\Exception\InvalidCredentials;
 use App\Domain\User\User;
 use App\Domain\User\UserRepositoryInterface;

@@ -5,40 +5,38 @@ declare(strict_types=1);
 namespace App\Application\Auth\CommandHandler;
 
 use App\Application\Auth\Command\RegisterUser;
+use App\Domain\Common\Security\PasswordHasherInterface;
 use App\Domain\Common\Transaction\TransactionManagerInterface;
-use App\Domain\Security\PasswordHasherInterface;
-use App\Domain\User\Exception\UserAlreadyExists;
-use App\Domain\User\Role;
+use App\Domain\User\Service\UserEmailMustBeUnique;
 use App\Domain\User\User;
 use App\Domain\User\UserRepositoryInterface;
-use DateTimeImmutable;
+use App\Domain\User\ValueObject\UserId;
 use Psr\Clock\ClockInterface;
 
-final class RegisterUserHandler
+final readonly class RegisterUserHandler
 {
     public function __construct(
-        private readonly UserRepositoryInterface     $users,
-        private readonly PasswordHasherInterface     $passwordHasher,
-        private readonly TransactionManagerInterface $transaction,
-        private readonly ClockInterface              $clock,
-    )
-    {
-    }
+        private UserRepositoryInterface $users,
+        private UserEmailMustBeUnique $userEmailMustBeUnique,
+        private PasswordHasherInterface $passwordHasher,
+        private TransactionManagerInterface $transaction,
+        private ClockInterface $clock,
+    ) {}
 
     public function __invoke(RegisterUser $command): User
     {
-        $passwordHash = $this->passwordHasher->hash(
-            $command->password->toString()
-        );
+        $passwordHash = $this->passwordHasher->hash($command->password->toString());
 
         $user = User::register(
-            id: uuid_create(UUID_TYPE_RANDOM),
+            id: UserId::generate(),
             email: $command->email,
             passwordHash: $passwordHash,
             registeredAt: $this->clock->now(),
             firstName: $command->firstName,
             lastName: $command->lastName,
         );
+
+        $this->userEmailMustBeUnique->assert($user);
 
         $this->users->save($user);
         $this->transaction->flush();

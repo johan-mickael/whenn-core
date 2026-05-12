@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\Common\Security\Authorization;
+
+enum Action: string
+{
+    case CREATE = 'CREATE';
+    case DELETE = 'DELETE';
+    case VIEW = 'VIEW';
+    case UPDATE = 'UPDATE';
+}

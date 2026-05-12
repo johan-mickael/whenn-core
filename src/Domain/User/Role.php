@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
-use App\Domain\Security\Permission;
+use App\Domain\Common\Security\Authorization\Permission;
 use App\Domain\User\Exception\InvalidRole;
-use Exception;
 
 enum Role: string
 {
@@ -17,51 +16,7 @@ enum Role: string
 
     public static function fromString(string $value): self
     {
-        return self::tryFrom($value)
-            ?? throw InvalidRole::fromValue($value);
-    }
-
-    public function inheritedRoles(): array
-    {
-        return match ($this) {
-            self::ADMIN => [
-                self::ADMIN,
-                self::STAFF,
-                self::BUYER,
-                self::USER,
-            ],
-
-            self::STAFF => [
-                self::STAFF,
-                self::BUYER,
-                self::USER,
-            ],
-
-            self::BUYER => [
-                self::BUYER,
-                self::USER,
-            ],
-
-            self::USER => [
-                self::USER,
-            ],
-        };
-    }
-
-    public function permissions(): array
-    {
-        return match ($this) {
-            self::ADMIN => [
-                Permission::MANAGE_USERS,
-                Permission::MANAGE_EVENTS,
-            ],
-
-            self::STAFF => [
-                Permission::MANAGE_EVENTS,
-            ],
-
-            self::BUYER, self::USER => [],
-        };
+        return self::tryFrom($value) ?? throw InvalidRole::fromValue($value);
     }
 
     /**
@@ -72,9 +27,22 @@ enum Role: string
     public function securityRoles(): array
     {
         return array_map(
-            static fn (Role $role) => 'ROLE_' . $role->value,
+            static fn(Role $role) => 'ROLE_' . $role->value,
             $this->inheritedRoles(),
         );
+    }
+
+    public function inheritedRoles(): array
+    {
+        return match ($this) {
+            self::ADMIN => [self::ADMIN, self::STAFF, self::BUYER, self::USER,],
+
+            self::STAFF => [self::STAFF, self::BUYER, self::USER,],
+
+            self::BUYER => [self::BUYER, self::USER,],
+
+            self::USER => [self::USER,],
+        };
     }
 
     public function hasPermission(Permission $permission): bool
@@ -86,14 +54,32 @@ enum Role: string
         );
     }
 
+    public function permissions(): array
+    {
+        return match ($this) {
+            self::ADMIN => [Permission::MANAGE_USERS, Permission::MANAGE_EVENTS,],
+
+            self::STAFF => [Permission::MANAGE_EVENTS,],
+
+            self::BUYER, self::USER => [],
+        };
+    }
+
     public function isAdmin(): bool
     {
-        return $this === self::ADMIN;
+        return in_array(
+            Role::ADMIN,
+            $this->inheritedRoles(),
+            true,
+        );
     }
 
     public function isStaff(): bool
     {
-        return $this === self::ADMIN
-            || $this === self::STAFF;
+        return in_array(
+            self::STAFF,
+            $this->inheritedRoles(),
+            true,
+        );
     }
 }

@@ -6,12 +6,12 @@ namespace App\UI\Http\Controller\Venue;
 
 use App\Application\Venue\Query\ListVenues;
 use App\Application\Venue\QueryHandler\ListVenuesHandler;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\UI\Http\Controller\HttpController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/venues', methods: ['GET'])]
-final class ListVenuesController extends AbstractController
+final class ListVenuesController extends HttpController
 {
     public function __construct(
         private readonly ListVenuesHandler $handler,
@@ -19,7 +19,6 @@ final class ListVenuesController extends AbstractController
 
     public function __invoke(): JsonResponse
     {
-        $user   = $this->getUser();
         $venues = ($this->handler)(new ListVenues);
 
         return $this->json(array_map(fn($venue) => [

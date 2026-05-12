@@ -20,6 +20,8 @@ services:
         resource: "../src/"
         exclude:
             - "../src/Domain/**/*RepositoryInterface.php"
+            - '../src/Domain/**/AuthorizationServiceInterface.php'
+            - '../src/Domain/**/PolicyInterface.php'
             - "../src/Domain/Common/TransactionManagerInterface.php"
             - "../src/Kernel.php"
 
@@ -29,6 +31,18 @@ services:
     App\Infrastructure\Http\Listener\SymfonyDomainExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
+
+    # Authorization Policies wiring
+    App\Domain\Common\Security\Authorization\AuthorizationService:
+        arguments:
+            $policies: !tagged_iterator app.authorization_policy
+
+    App\Domain\Common\Security\Authorization\AuthorizationServiceInterface:
+        alias: App\Domain\Common\Security\Authorization\AuthorizationService
+
+    App\Domain\Venue\Security\Authorization\VenuePolicy:
+        tags:
+            - 'app.authorization_policy'
 
     # Bind domain repository interfaces to Doctrine implementations
     App\Domain\Security\PasswordHasherInterface:

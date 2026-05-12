@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Security\User;
 
+use App\Domain\Common\Security\Authorization\UserContext;
 use App\Domain\User\User as DomainUser;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -17,6 +18,14 @@ final readonly class SymfonySecurityUser implements UserInterface, PasswordAuthe
     public function getDomainUser(): DomainUser
     {
         return $this->user;
+    }
+
+    public function getUserContext(): UserContext
+    {
+        return new UserContext(
+            id: $this->user->id(),
+            role: $this->user->role(),
+        );
     }
 
     public function getUserIdentifier(): string

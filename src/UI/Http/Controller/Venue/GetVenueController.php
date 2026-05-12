@@ -6,14 +6,14 @@ namespace App\UI\Http\Controller\Venue;
 
 use App\Application\Venue\Query\GetVenueById;
 use App\Application\Venue\QueryHandler\GetVenueByIdHandler;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\UI\Http\Controller\HttpController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/venues/{id}', methods: ['GET'])]
 #[IsGranted('ROLE_ADMIN')]
-final class GetVenueController extends AbstractController
+final class GetVenueController extends HttpController
 {
     public function __construct(
         private readonly GetVenueByIdHandler $handler,
