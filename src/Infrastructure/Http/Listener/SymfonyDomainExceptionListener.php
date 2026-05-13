@@ -9,7 +9,7 @@ use App\Domain\User\Exception\UserAlreadyExists;
 use App\Domain\Venue\Exception\DuplicateVenueName;
 use App\Domain\Venue\Exception\VenueNotFound;
 use InvalidArgumentException;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -22,6 +22,7 @@ final class SymfonyDomainExceptionListener
         DuplicateVenueName::class => Response::HTTP_CONFLICT,
         InvalidCredentials::class => Response::HTTP_UNAUTHORIZED,
         InvalidArgumentException::class => Response::HTTP_UNPROCESSABLE_ENTITY,
+        AccessDeniedException::class => Response::HTTP_FORBIDDEN,
     ];
 
     public function onKernelException(ExceptionEvent $event): void
@@ -34,9 +35,11 @@ final class SymfonyDomainExceptionListener
             default => Response::HTTP_INTERNAL_SERVER_ERROR,
         };
 
-        $event->setResponse(new JsonResponse(
-            ['error' => $exception->getMessage()],
-            $statusCode,
-        ));
+        $event->setResponse(
+            new Response(
+                $exception->getMessage(),
+                $statusCode,
+            ),
+        );
     }
 }
