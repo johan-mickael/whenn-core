@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Ticket;
 
-use App\Domain\Event\Event;
+use App\Infrastructure\Persistence\Doctrine\Entity\EventEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -22,9 +22,9 @@ class TicketCategory
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private string $id;
 
-    #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'ticketCategories')]
+    #[ORM\ManyToOne(targetEntity: EventEntity::class, inversedBy: 'ticketCategories')]
     #[ORM\JoinColumn(name: 'event_id', nullable: false, onDelete: 'CASCADE')]
-    private Event $event;
+    private EventEntity $event;
 
     #[ORM\Column]
     private string $name;
@@ -63,7 +63,7 @@ class TicketCategory
     private Collection $tickets;
 
     public function __construct(
-        Event $event,
+        EventEntity $event,
         string $name,
         string $price,
         int $totalQuantity,
@@ -116,7 +116,7 @@ class TicketCategory
     {
         return $this->id;
     }
-    public function getEvent(): Event
+    public function getEvent(): EventEntity
     {
         return $this->event;
     }

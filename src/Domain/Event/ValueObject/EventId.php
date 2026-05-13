@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\User\ValueObject;
+namespace App\Domain\Event\ValueObject;
 
 use App\Domain\Common\Id\IdInterface;
-use App\Domain\User\Exception\InvalidUserId;
+use App\Domain\Event\Exception\InvalidEventId;
 
-final readonly class UserId implements IdInterface
+final readonly class EventId implements IdInterface
 {
     private function __construct(private string $value) {}
 
     public static function fromString(string $value): self
     {
         if (!uuid_is_valid($value)) {
-            throw new InvalidUserId($value);
+            throw InvalidEventId::create($value);
         }
 
         return new self($value);

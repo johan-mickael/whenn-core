@@ -4,184 +4,167 @@ declare(strict_types=1);
 
 namespace App\Domain\Event;
 
-use App\Domain\Ticket\TicketCategory;
-use App\Domain\Venue\Venue;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use App\Domain\Event\Exception\InvalidEventName;
+use App\Domain\Event\Exception\InvalidEventStatusTransition;
+use App\Domain\Event\ValueObject\DateRange;
+use App\Domain\Event\ValueObject\EventId;
+use App\Domain\Event\ValueObject\EventSlug;
+use App\Domain\Venue\ValueObject\VenueId;
+use DateTimeImmutable;
 
-#[ORM\Entity]
-#[ORM\Table(name: 'event')]
-#[ORM\Index(name: 'idx_event_status', columns: ['status'])]
-#[ORM\HasLifecycleCallbacks]
-class Event
+final class Event
 {
-    #[ORM\Id]
-    #[ORM\Column(type: 'guid')]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    private string $id;
-
-    #[ORM\ManyToOne(targetEntity: Venue::class, inversedBy: 'events')]
-    #[ORM\JoinColumn(name: 'venue_id', nullable: false)]
-    private Venue $venue;
-
-    #[ORM\Column]
-    private string $name;
-
-    #[ORM\Column]
-    private string $slug;
-
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $description = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?string $imageUrl = null;
-
-    #[ORM\Column(enumType: EventStatus::class)]
-    private EventStatus $status;
-
-    #[ORM\Column]
-    private \DateTimeImmutable $startAt;
-
-    #[ORM\Column]
-    private \DateTimeImmutable $endAt;
-
-    #[ORM\Column]
-    private \DateTimeImmutable $createdAt;
-
-    #[ORM\Column]
-    private \DateTimeImmutable $updatedAt;
-
-    #[ORM\OneToMany(targetEntity: TicketCategory::class, mappedBy: 'event', cascade: ['persist'], orphanRemoval: true)]
-    private Collection $ticketCategories;
-
-    public function __construct(
-        Venue $venue,
-        string $name,
-        string $slug,
-        \DateTimeImmutable $startAt,
-        \DateTimeImmutable $endAt,
-        ?string $description = null,
-        ?string $imageUrl = null,
-        EventStatus $status = EventStatus::DRAFT,
+    private function __construct(
+        private readonly EventId $id,
+        private string $name,
+        private VenueId $venueId,
+        private readonly EventSlug $slug,
+        private DateRange $dateRange,
+        private EventStatus $status,
+        private DateTimeImmutable $createdAt,
+        private ?string $description,
+        private ?string $imageUrl,
     ) {
-        $this->venue = $venue;
-        $this->name = $name;
-        $this->slug = $slug;
-        $this->startAt = $startAt;
-        $this->endAt = $endAt;
-        $this->description = $description;
-        $this->imageUrl = $imageUrl;
-        $this->status = $status;
-        $this->ticketCategories = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->assertValidName($name);
     }
 
-    #[ORM\PreUpdate]
-    public function onPreUpdate(): void
-    {
-        $this->updatedAt = new \DateTimeImmutable();
+    public static function create(
+        EventId $id,
+        string $name,
+        VenueId $venueId,
+        EventSlug $slug,
+        DateRange $dateRange,
+        EventStatus $status,
+        DateTimeImmutable $createdAt,
+        ?string $description = null,
+        ?string $imageUrl = null,
+    ): self {
+        return new self(
+            id: $id,
+            name: $name,
+            venueId: $venueId,
+            slug: $slug,
+            dateRange: $dateRange,
+            status: $status,
+            createdAt: $createdAt,
+            description: $description,
+            imageUrl: $imageUrl,
+        );
     }
 
     public function publish(): void
     {
+        if ($this->status !== EventStatus::DRAFT) {
+            throw InvalidEventStatusTransition::cannotPublish($this->status);
+        }
+
         $this->status = EventStatus::PUBLISHED;
     }
+
     public function cancel(): void
     {
+        if ($this->status === EventStatus::CANCELLED) {
+            throw InvalidEventStatusTransition::cannotCancel($this->status);
+        }
+
+        if ($this->status === EventStatus::ENDED) {
+            throw InvalidEventStatusTransition::cannotCancel($this->status);
+        }
+
         $this->status = EventStatus::CANCELLED;
     }
+
     public function end(): void
     {
+        if ($this->status !== EventStatus::PUBLISHED) {
+            throw InvalidEventStatusTransition::cannotEnd($this->status);
+        }
+
         $this->status = EventStatus::ENDED;
     }
 
-    public function getId(): string
+    public function reschedule(DateRange $dateRange): void
+    {
+        if ($this->status === EventStatus::CANCELLED) {
+            throw InvalidEventStatusTransition::cannotReschedule($this->status);
+        }
+
+        if ($this->status === EventStatus::ENDED) {
+            throw InvalidEventStatusTransition::cannotReschedule($this->status);
+        }
+
+        $this->dateRange = $dateRange;
+    }
+
+    public function updateDetails(
+        string $name,
+        ?string $description,
+        ?string $imageUrl,
+    ): void {
+        $this->assertValidName($name);
+        $this->name = $name;
+        $this->description = $description;
+        $this->imageUrl = $imageUrl;
+    }
+
+    public function relocate(VenueId $venueId): void
+    {
+        if ($this->status === EventStatus::CANCELLED) {
+            throw InvalidEventStatusTransition::cannotRelocate($this->status);
+        }
+
+        $this->venueId = $venueId;
+    }
+
+    public function id(): EventId
     {
         return $this->id;
     }
 
-    public function getVenue(): Venue
+    public function venueId(): VenueId
     {
-        return $this->venue;
+        return $this->venueId;
     }
-    public function setVenue(Venue $venue): static
-    {
-        $this->venue = $venue;
-        return $this;
-    }
-    public function getName(): string
-    {
-        return $this->name;
-    }
-    public function setName(string $name): static
-    {
-        $this->name = $name;
-        return $this;
-    }
-    public function getSlug(): string
+
+    public function slug(): EventSlug
     {
         return $this->slug;
     }
-    public function setSlug(string $slug): static
+
+    public function name(): string
     {
-        $this->slug = $slug;
-        return $this;
+        return $this->name;
     }
-    public function getDescription(): ?string
+
+    public function dateRange(): DateRange
+    {
+        return $this->dateRange;
+    }
+
+    public function description(): ?string
     {
         return $this->description;
     }
-    public function setDescription(?string $description): static
-    {
-        $this->description = $description;
-        return $this;
-    }
-    public function getImageUrl(): ?string
+
+    public function imageUrl(): ?string
     {
         return $this->imageUrl;
     }
-    public function setImageUrl(?string $imageUrl): static
-    {
-        $this->imageUrl = $imageUrl;
-        return $this;
-    }
-    public function getStatus(): EventStatus
+
+    public function status(): EventStatus
     {
         return $this->status;
     }
-    public function getStartAt(): \DateTimeImmutable
-    {
-        return $this->startAt;
-    }
-    public function setStartAt(\DateTimeImmutable $startAt): static
-    {
-        $this->startAt = $startAt;
-        return $this;
-    }
-    public function getEndAt(): \DateTimeImmutable
-    {
-        return $this->endAt;
-    }
-    public function setEndAt(\DateTimeImmutable $endAt): static
-    {
-        $this->endAt = $endAt;
-        return $this;
-    }
-    public function getCreatedAt(): \DateTimeImmutable
+
+    public function createdAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }
-    public function getUpdatedAt(): \DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
 
-    /** @return Collection<int, TicketCategory> */
-    public function getTicketCategories(): Collection
+    private function assertValidName(string $name): void
     {
-        return $this->ticketCategories;
+        if (trim($name) === '') {
+            throw InvalidEventName::create();
+        }
     }
 }

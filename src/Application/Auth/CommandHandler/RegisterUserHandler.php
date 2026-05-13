@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Auth\CommandHandler;
 
 use App\Application\Auth\Command\RegisterUserCommand;
+use App\Domain\Common\Id\IdGeneratorInterface;
 use App\Domain\Common\Security\PasswordHasherInterface;
 use App\Domain\Common\Transaction\TransactionManagerInterface;
 use App\Domain\User\Rule\UserEmailMustBeUnique;
@@ -21,6 +22,7 @@ final readonly class RegisterUserHandler
         private PasswordHasherInterface $passwordHasher,
         private TransactionManagerInterface $transaction,
         private ClockInterface $clock,
+        private IdGeneratorInterface $idGenerator,
     ) {}
 
     public function __invoke(RegisterUserCommand $command): User
@@ -28,7 +30,7 @@ final readonly class RegisterUserHandler
         $passwordHash = $this->passwordHasher->hash($command->password->toString());
 
         $user = User::register(
-            id: UserId::generate(),
+            id: UserId::fromString($this->idGenerator->generate()),
             email: $command->email,
             passwordHash: $passwordHash,
             registeredAt: $this->clock->now(),

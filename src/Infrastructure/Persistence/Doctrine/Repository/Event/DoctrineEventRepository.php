@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Event;
 
-use App\Domain\Event\Event;
 use App\Domain\Event\EventRepositoryInterface;
+use App\Infrastructure\Persistence\Doctrine\Entity\EventEntity;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class DoctrineEventRepository implements EventRepositoryInterface
@@ -14,17 +14,17 @@ final class DoctrineEventRepository implements EventRepositoryInterface
     {
     }
 
-    public function findById(string $id): ?Event
+    public function findById(string $id): ?EventEntity
     {
-        return $this->em->find(Event::class, $id);
+        return $this->em->find(EventEntity::class, $id);
     }
 
-    public function save(Event $event): void
+    public function save(EventEntity $event): void
     {
         $this->em->persist($event);
     }
 
-    public function remove(Event $event): void
+    public function remove(EventEntity $event): void
     {
         $this->em->remove($event);
     }
