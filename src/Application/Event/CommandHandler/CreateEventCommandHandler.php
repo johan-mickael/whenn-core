@@ -7,9 +7,12 @@ namespace App\Application\Event\CommandHandler;
 use App\Application\Event\Command\CreateEventCommand;
 use App\Application\Event\Result\CreateEventResult;
 use App\Domain\Common\Id\IdGeneratorInterface;
+use App\Domain\Common\Security\Authorization\Action;
+use App\Domain\Common\Security\Authorization\AuthorizationServiceInterface;
 use App\Domain\Common\Security\Authorization\UserContext;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventRepositoryInterface;
+use App\Domain\Event\Exception\CreateEventForbidden;
 use App\Domain\Event\ValueObject\DateRange;
 use App\Domain\Event\ValueObject\EventId;
 use App\Domain\Event\ValueObject\EventSlug;
@@ -28,13 +31,22 @@ readonly class CreateEventCommandHandler implements CreateEventUseCase
         private IdGeneratorInterface $idGenerator,
         private ClockInterface $clock,
         private EntityManagerInterface $entityManager,
+        private AuthorizationServiceInterface $authorizationService,
     ) {
     }
 
     public function __invoke(CreateEventCommand $command, UserContext $actor): CreateEventResult
     {
+        if (!$this->authorizationService->authorize(
+            $actor,
+            Action::CREATE,
+            Event::class,
+        )) {
+            throw new CreateEventForbidden();
+        }
+
         // Check for venue if exists
-        $this->venueRepository->getById($command->venueId);
+        $this->venueRepository->getById(VenueId::fromString($command->venueId));
 
         $event = Event::create(
             EventId::fromString($this->idGenerator->generate()),
@@ -52,10 +64,10 @@ readonly class CreateEventCommandHandler implements CreateEventUseCase
         $this->entityManager->flush();
 
         return new CreateEventResult(
-            (string) $event->id(),
+            (string)$event->id(),
             $event->name(),
-            (string) $event->venueId(),
-            (string) $event->slug(),
+            (string)$event->venueId(),
+            (string)$event->slug(),
             $event->dateRange()->startAt->format(DateTimeInterface::ATOM),
             $event->dateRange()->endAt->format(DateTimeInterface::ATOM),
             $event->status()->value,

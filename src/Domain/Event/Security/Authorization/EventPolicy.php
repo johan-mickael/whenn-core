@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Venue\Security\Authorization;
+namespace App\Domain\Event\Security\Authorization;
 
 use App\Domain\Common\Security\Authorization\Action;
 use App\Domain\Common\Security\Authorization\PolicyInterface;
 use App\Domain\Common\Security\Authorization\Subject;
 use App\Domain\Common\Security\Authorization\UserContext;
-use App\Domain\Venue\Venue;
+use App\Domain\Event\Event;
 
-final class VenuePolicy implements PolicyInterface
+final class EventPolicy implements PolicyInterface
 {
     public function supports(
         Subject|string $subject,
     ): bool {
-        return Venue::class === $subject || $subject instanceof VenueContext;
+        return Event::class === $subject || $subject instanceof EventContext;
     }
 
     public function authorize(
@@ -24,24 +24,24 @@ final class VenuePolicy implements PolicyInterface
         Subject|string $subject,
     ): bool {
         if (
-            $subject === Venue::class
+            $subject === Event::class
             && $action === Action::CREATE
         ) {
             return $actor->role->isStaff();
         }
 
         if (
-            $subject === Venue::class
+            $subject === Event::class
             && $action === Action::LIST
         ) {
-            return $actor->role->isStaff();
+            return true;
         }
 
         if (
             $subject instanceof EventContext
             && $action === Action::VIEW
         ) {
-            return $actor->role->isStaff();
+            return true;
         }
 
         return false;
