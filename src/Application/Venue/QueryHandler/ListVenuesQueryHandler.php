@@ -13,7 +13,7 @@ use App\Domain\Venue\Exception\ListVenuesForbidden;
 use App\Domain\Venue\Venue;
 use App\Domain\Venue\VenueRepositoryInterface;
 
-final readonly class ListVenuesHandler
+final readonly class ListVenuesQueryHandler implements ListVenuesUseCase
 {
     public function __construct(
         private VenueRepositoryInterface $venueRepository,

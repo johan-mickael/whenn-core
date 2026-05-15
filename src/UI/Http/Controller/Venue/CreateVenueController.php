@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\UI\Http\Controller\Venue;
 
 use App\Application\Venue\Command\CreateVenueCommand;
-use App\Application\Venue\CommandHandler\CreateVenueHandler;
+use App\Application\Venue\CommandHandler\CreateVenueUseCase;
 use App\UI\Http\Controller\HttpController;
 use App\UI\Http\Request\Venue\CreateVenueRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,7 +18,7 @@ final
 class CreateVenueController extends HttpController {
     public
     function __construct(
-        private readonly CreateVenueHandler $handler,
+        private readonly CreateVenueUseCase $createVenueUseCase,
     ) {}
 
     public
@@ -36,7 +36,7 @@ class CreateVenueController extends HttpController {
             longitude: $dto->longitude,
         );
 
-        $venueResponse = ($this->handler)(
+        $venueResponse = ($this->createVenueUseCase)(
             $createVenueCommand,
             $this->getUserContext(),
         );

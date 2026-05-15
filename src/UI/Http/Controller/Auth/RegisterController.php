@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\UI\Http\Controller\Auth;
 
 use App\Application\Auth\Command\RegisterUserCommand;
-use App\Application\Auth\CommandHandler\RegisterUserHandler;
+use App\Application\Auth\CommandHandler\RegisterUserUseCase;
 use App\UI\Http\Request\Auth\RegisterRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class RegisterController extends AbstractController
 {
     public function __construct(
-        private readonly RegisterUserHandler $handler,
+        private readonly RegisterUserUseCase $registerUserUseCase,
     ) {
     }
 
@@ -25,19 +25,13 @@ final class RegisterController extends AbstractController
         #[MapRequestPayload] RegisterRequest $dto,
     ): JsonResponse
     {
-        $user = ($this->handler)(new RegisterUserCommand(
+        $registerUserResult = ($this->registerUserUseCase)(new RegisterUserCommand(
             email: $dto->email,
             password: $dto->password,
             firstName: $dto->first_name,
             lastName: $dto->last_name,
         ));
 
-        return $this->json([
-            'id'        => $user->id(),
-            'email'     => $user->email(),
-            'role'      => $user->role()->value,
-            'firstName' => $user->firstName(),
-            'lastName'  => $user->lastName(),
-        ], Response::HTTP_CREATED);
+        return $this->json($registerUserResult, Response::HTTP_CREATED);
     }
 }

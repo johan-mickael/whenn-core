@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Auth\Query;
+namespace App\Application\Auth\Command;
 
 use App\Domain\User\ValueObject\Email;
 use App\Domain\User\ValueObject\PlainPassword;
 
-final readonly class AuthenticateUserQuery
+final readonly class LoginCommand
 {
     public Email $email;
     public PlainPassword $password;

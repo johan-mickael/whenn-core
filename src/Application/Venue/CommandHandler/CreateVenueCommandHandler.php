@@ -22,7 +22,7 @@ use App\Domain\Venue\Venue;
 use App\Domain\Venue\VenueRepositoryInterface;
 
 final readonly
-class CreateVenueHandler
+class CreateVenueCommandHandler implements CreateVenueUseCase
 {
     public function __construct(
         private VenueRepositoryInterface $venues,

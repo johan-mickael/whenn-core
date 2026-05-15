@@ -14,7 +14,7 @@ use App\Domain\Venue\Exception\VenueNotFound;
 use App\Domain\Venue\Security\Authorization\VenueContext;
 use App\Domain\Venue\VenueRepositoryInterface;
 
-final readonly class GetVenueByIdHandler
+final readonly class GetVenueByIdQueryHandler implements GetVenueByIdUseCase
 {
     public function __construct(
         private VenueRepositoryInterface $venues,

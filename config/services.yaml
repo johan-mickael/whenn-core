@@ -27,10 +27,6 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-
-    App\Application\Event\CommandHandler\CreateEventUseCase:
-        class: App\Application\Event\CommandHandler\CreateEventCommandHandler
-
     App\Infrastructure\Http\Listener\SymfonyDomainExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
@@ -59,6 +55,9 @@ services:
 
     App\Domain\Order\OrderRepositoryInterface:
         class: App\Infrastructure\Persistence\Doctrine\Repository\Order\DoctrineOrderRepository
+
+    App\Domain\User\TokenManagerInterface:
+        class: App\Infrastructure\Security\User\Jwt\LexikJwtTokenGenerator
 
     App\Domain\Venue\VenueRepositoryInterface:
         class: App\Infrastructure\Persistence\Doctrine\Repository\Venue\DoctrineVenueRepository

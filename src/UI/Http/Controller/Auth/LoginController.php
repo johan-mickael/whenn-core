@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\UI\Http\Controller\Auth;
 
-use App\Application\Auth\Query\AuthenticateUserQuery;
-use App\Application\Auth\QueryHandler\AuthenticateUserHandler;
-use App\Infrastructure\Security\User\Jwt\LexikJwtTokenGenerator;
+use App\Application\Auth\Command\LoginCommand;
+use App\Application\Auth\CommandHandler\LoginUseCase;
 use App\UI\Http\Request\Auth\LoginRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,20 +16,17 @@ use Symfony\Component\Routing\Attribute\Route;
 final class LoginController extends AbstractController
 {
     public function __construct(
-        private readonly AuthenticateUserHandler $handler,
-        private readonly LexikJwtTokenGenerator  $tokenGenerator,
+        private readonly LoginUseCase $loginUseCase,
     ) {}
 
     public function __invoke(
         #[MapRequestPayload] LoginRequest $dto,
     ): JsonResponse {
-        $user = ($this->handler)(new AuthenticateUserQuery(
+        $userToken = ($this->loginUseCase)(new LoginCommand(
             email: $dto->email,
             password: $dto->password,
         ));
 
-        return $this->json([
-            'token' => $this->tokenGenerator->generateFor($user),
-        ]);
+        return $this->json(['token' => $userToken]);
     }
 }
