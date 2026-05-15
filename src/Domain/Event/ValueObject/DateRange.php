@@ -9,13 +9,29 @@ use DateTimeImmutable;
 
 final readonly class DateRange
 {
-    public function __construct(
+    private function __construct(
         public DateTimeImmutable $startAt,
         public DateTimeImmutable $endAt,
     ) {
-        if ($endAt <= $startAt) {
-            throw InvalidDateRange::endBeforeStart($startAt, $endAt);
+    }
+
+    public static function create(
+        DateTimeImmutable $startAt,
+        DateTimeImmutable $endAt,
+    ): DateRange {
+        return new self($startAt, $endAt)->assert();
+    }
+
+    private function assert(): self
+    {
+        if ($this->endAt <= $this->startAt) {
+            throw InvalidDateRange::endBeforeStart(
+                $this->startAt,
+                $this->endAt
+            );
         }
+
+        return $this;
     }
 
     public function isOngoing(DateTimeImmutable $now = new DateTimeImmutable()): bool

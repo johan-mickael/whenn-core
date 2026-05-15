@@ -74,6 +74,12 @@ class EventEntity
         return $this->id;
     }
 
+    public function setId(string $id): static
+    {
+        $this->id = $id;
+        return $this;
+    }
+
     public function getVenue(): VenueEntity
     {
         return $this->venue;
@@ -99,6 +105,11 @@ class EventEntity
     public function getSlug(): string
     {
         return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
     }
 
     public function getDescription(): ?string
@@ -159,5 +170,11 @@ class EventEntity
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
     }
 }

@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Domain\Event;
 
-use App\Infrastructure\Persistence\Doctrine\Entity\EventEntity;
+use App\Domain\Event\ValueObject\EventId;
 
 interface EventRepositoryInterface
 {
-    public function findById(string $id): ?EventEntity;
-    /** @return EventEntity[] */
-    public function save(EventEntity $event): void;
-    public function remove(EventEntity $event): void;
+    public function create(Event $event): void;
+    public function getById(EventId $id): Event;
+    public function remove(Event $event): void;
+
+    /**
+     * @return Event[]
+     */
+    public function list(): array;
 }

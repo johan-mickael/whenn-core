@@ -24,14 +24,10 @@ final readonly class GetVenueByIdHandler
 
     public function __invoke(GetVenueByIdQuery $query, UserContext $actor): GetVenueResult
     {
-        $venue = $this->venues->findById($query->id);
+        $venue = $this->venues->getById($query->id);
 
         if (!$this->authorizationService->authorize($actor, Action::VIEW, new VenueContext($venue))) {
             throw GetVenueForbidden::forId($venue->id());
-        }
-
-        if (is_null($venue)) {
-            throw VenueNotFound::forId($query->id);
         }
 
         return new GetVenueResult(

@@ -8,11 +8,13 @@ use App\Domain\Event\Exception\InvalidEventSlug;
 
 final readonly class EventSlug
 {
-    public string $value;
+    public const string EVENT_SLUG_PATTERN = '/^[a-z0-9]+(?:-[a-z0-9]+)*$/';
 
-    private const string EVENT_SLUG_PATTERN = '/^[a-z0-9]+(?:-[a-z0-9]+)*$/';
+    public function __construct(private string $value)
+    {
+    }
 
-    public function __construct(string $value)
+    public static function create(string $value): self
     {
         $normalized = mb_strtolower(trim($value));
 
@@ -20,8 +22,9 @@ final readonly class EventSlug
             throw InvalidEventSlug::create($value);
         }
 
-        $this->value = $normalized;
+        return new self($normalized);
     }
+
 
     public function equals(self $other): bool
     {
