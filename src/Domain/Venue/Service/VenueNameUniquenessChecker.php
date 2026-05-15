@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Domain\Venue\Rule;
+namespace App\Domain\Venue\Service;
 
-use App\Domain\Venue\Exception\DuplicateVenueAddress;
+use App\Domain\Venue\Exception\DuplicateVenueName;
 use App\Domain\Venue\Venue;
 use App\Domain\Venue\VenueRepositoryInterface;
 
-class VenueAddressMustBeUnique
+final class VenueNameUniquenessChecker
 {
     private VenueRepositoryInterface $venueRepository;
 
@@ -17,10 +17,10 @@ class VenueAddressMustBeUnique
 
     public function check(Venue $venue): void
     {
-        if (empty($this->venueRepository->findByAddress($venue->address()))) {
+        if (empty($this->venueRepository->findByName($venue->name()))) {
             return;
         }
 
-        throw DuplicateVenueAddress::for($venue->address());
+        throw DuplicateVenueName::for($venue->name());
     }
 }

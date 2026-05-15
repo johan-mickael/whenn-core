@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Domain\User\Rule;
+namespace App\Domain\User\Service;
 
 use App\Domain\User\Exception\UserAlreadyExists;
 use App\Domain\User\User;
 use App\Domain\User\UserRepositoryInterface;
 
-final readonly class UserEmailMustBeUnique
+final readonly class UserEmailMustUniquenessChecker
 {
     public function __construct(private UserRepositoryInterface $userRepository)
     {

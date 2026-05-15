@@ -10,8 +10,8 @@ use App\Domain\Common\Security\Authorization\Action;
 use App\Domain\Common\Security\Authorization\AuthorizationServiceInterface;
 use App\Domain\Common\Security\Authorization\UserContext;
 use App\Domain\Venue\Exception\GetVenueForbidden;
-use App\Domain\Venue\Exception\VenueNotFound;
 use App\Domain\Venue\Security\Authorization\VenueContext;
+use App\Domain\Venue\ValueObject\VenueId;
 use App\Domain\Venue\VenueRepositoryInterface;
 
 final readonly class GetVenueByIdQueryHandler implements GetVenueByIdUseCase
@@ -24,7 +24,7 @@ final readonly class GetVenueByIdQueryHandler implements GetVenueByIdUseCase
 
     public function __invoke(GetVenueByIdQuery $query, UserContext $actor): GetVenueResult
     {
-        $venue = $this->venues->getById($query->id);
+        $venue = $this->venues->getById(VenueId::fromString($query->id));
 
         if (!$this->authorizationService->authorize($actor, Action::VIEW, new VenueContext($venue))) {
             throw GetVenueForbidden::forId($venue->id());

@@ -12,8 +12,8 @@ use App\Domain\Common\Security\Authorization\AuthorizationServiceInterface;
 use App\Domain\Common\Security\Authorization\UserContext;
 use App\Domain\Common\Transaction\TransactionManagerInterface;
 use App\Domain\Venue\Exception\CreateVenueForbidden;
-use App\Domain\Venue\Rule\VenueAddressMustBeUnique;
-use App\Domain\Venue\Rule\VenueNameMustBeUnique;
+use App\Domain\Venue\Service\VenueAddressUniquenessChecker;
+use App\Domain\Venue\Service\VenueNameUniquenessChecker;
 use App\Domain\Venue\ValueObject\Address;
 use App\Domain\Venue\ValueObject\Capacity;
 use App\Domain\Venue\ValueObject\GeoLocation;
@@ -26,8 +26,8 @@ class CreateVenueCommandHandler implements CreateVenueUseCase
 {
     public function __construct(
         private VenueRepositoryInterface $venues,
-        private VenueNameMustBeUnique $venueNameMustBeUnique,
-        private VenueAddressMustBeUnique $venueAddressMustBeUnique,
+        private VenueNameUniquenessChecker $venueNameMustBeUnique,
+        private VenueAddressUniquenessChecker $venueAddressMustBeUnique,
         private TransactionManagerInterface $transaction,
         private AuthorizationServiceInterface $authorization,
         private IdGeneratorInterface $idGenerator,

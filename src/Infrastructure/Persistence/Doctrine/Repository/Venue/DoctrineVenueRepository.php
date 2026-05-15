@@ -6,12 +6,12 @@ namespace App\Infrastructure\Persistence\Doctrine\Repository\Venue;
 
 use App\Domain\Venue\Exception\VenueNotFound;
 use App\Domain\Venue\ValueObject\Address;
+use App\Domain\Venue\ValueObject\VenueId;
 use App\Domain\Venue\Venue;
 use App\Domain\Venue\VenueRepositoryInterface;
 use App\Infrastructure\Persistence\Doctrine\Entity\VenueEntity;
 use App\Infrastructure\Persistence\Doctrine\Mapper\VenueMapper;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityNotFoundException;
 
 final readonly class DoctrineVenueRepository implements VenueRepositoryInterface
 {
@@ -31,7 +31,7 @@ final readonly class DoctrineVenueRepository implements VenueRepositoryInterface
         );
     }
 
-    public function getById(string $id): Venue
+    public function getById(VenueId $id): Venue
     {
         $entity = $this->em->find(VenueEntity::class, $id);
 
